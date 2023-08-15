@@ -1,7 +1,7 @@
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-family: verdana ;
 }
 
 header {
@@ -27,79 +27,53 @@ nav a {
 }
 
 .login {
-    text-align: center;
-}
-.login-form {
-    max-width: 300px;
-    margin: 0 auto;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px; /* You can adjust the width as needed */
+    margin: 0 auto; /* To center the form horizontally */
 }
 
-.login-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-}
-
-.login-form button[type="submit"],
-.login-form input[type="text"],
-.login-form input[type="password"] {
+.login-form input,
+.login-form button {
     width: 100%;
     padding: 10px;
-    border-radius: 6px;
-}
-.login-form input[type="text"],
-.login-form input[type="password"] {
     margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 6px;
     border: 1px solid #ccc;
 }
 
-.login-form button[type="submit"] {
-    display: block;
+.login-form button {
     background-color: #374f2f;
     color: #fff;
     border: none;
     cursor: pointer;
 }
 
-.login-form button[type="submit"]:hover {
-    background-color: #304529;
+.remember {
+    display: inline-flex;
+    align-items: left;
+    font-size: 13px;
+    margin-right: 100px;
 }
 
-.remember-label {
-    margin-right: 5px;
+.remember label {
+    white-space: nowrap;
+    margin-left: 3px;
+    margin-top: 1px;
 }
 
-.login-form .remember-label,
-.login-form input[type="checkbox"] {
-    vertical-align: middle;
+.login-form .forgot-password {
+    text-align: center;
+    font-size: 13px;
 }
 
-#remember {
-    margin-bottom: 7px;
-}
-
-.forgot-password {
-    text-decoration: None;
-    text-align: right;
-}
-
-.forgot-password:visited {
+.login-form .forgot-password a {
     color: black;
+    text-decoration: none;
 }
 
-.remember-forgot-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+.login-form .forgot-password a:hover {
+    text-decoration: underline;
 }
-
-.checkbox-container {
-    display: flex;
-    align-items: center;
-}
-
