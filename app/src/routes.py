@@ -1,9 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request
 from src import app, db, bcrypt
-from src.forms import RegistrationForm, LoginForm
+from src.forms import RegistrationForm, LoginForm, LogoUploadForm, DeleteAccountForm
 from src.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
-
+from werkzeug.utils import secure_filename
+import os
 
 posts = [
     {
@@ -73,7 +74,29 @@ def logout():
     return redirect(url_for("home"))
 
 
-@app.route("/account")
+@app.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
-    return render_template("account.html", title="Account")
+    logo_form = LogoUploadForm()
+    delete_form = DeleteAccountForm()
+
+    if logo_form.validate_on_submit():
+        if logo_form.logo.data:
+            logo_filename = secure_filename(logo_form.logo.data.filename)
+            logo_path = os.path.join(app.root_path, "static", "logos", logo_filename)
+            logo_form.logo.data.save(logo_path)
+            current_user.logo_url = f"logos/{logo_filename}"
+            db.session.commit()
+            flash("Logo uploaded successfully!", "success")
+
+    if delete_form.validate_on_submit():
+        if request.method == "POST":
+            db.session.delete(current_user)  # Delete user from the database
+            db.session.commit()
+            logout_user()  # Log the user out
+            flash("Your account has been deleted.", "success")
+            return redirect(url_for("home"))
+
+    return render_template(
+        "account.html", title="Account", logo_form=logo_form, delete_form=delete_form
+    )
