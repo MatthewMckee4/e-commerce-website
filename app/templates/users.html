@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+
+{% block content %}
+        <main>
+            <div>
+                <form action="/users" method="POST">
+                    <input type="text" placeholder="Name" name="name" />
+                    <input
+                        type="submit"
+                        placeholder="Add Name"
+                        class="btn btn-secondary"
+                    />
+                </form>
+            </div>
+            <div>
+                <h2>User List</h2>
+                <ul>
+                    {% for user in users %}
+                    <li>ID: {{ user.id }}, Name: {{ user.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </main>
+{% endblock %}

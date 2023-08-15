@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+}
+
+main {
+    margin: 20px;
+    margin: 20 auto;
+    padding: 20px;
+}
+
+nav {
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+.login {
+    text-align: center;
+}
+.login-form {
+    max-width: 300px;
+    margin: 0 auto;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.login-form button[type="submit"],
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+}
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+.login-form button[type="submit"] {
+    display: block;
+    background-color: #374f2f;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.login-form button[type="submit"]:hover {
+    background-color: #304529;
+}
+
+.remember-label {
+    margin-right: 5px;
+}
+
+.login-form .remember-label,
+.login-form input[type="checkbox"] {
+    vertical-align: middle;
+}
+
+#remember {
+    margin-bottom: 7px;
+}
+
+.forgot-password {
+    text-decoration: None;
+    text-align: right;
+}
+
+.forgot-password:visited {
+    color: black;
+}
+
+.remember-forgot-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+}
+

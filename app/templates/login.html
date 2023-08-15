@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <main>
+        <div class="login">
+        <h2>Log in Page</h2>
+        <form class="login-form" action="{{ url_for('login') }}" method="post">
+            <input type="text" placeholder="Username" id="username" name="username" required>
+            <input type="password" placeholder="Password" id="password" name="password" required>
+            <div class="remember-forgot-container">
+                <div class="checkbox-container">
+                    <label class="remember-label" for="remember">Remember Me:</label>
+                    <input type="checkbox" id="remember" name="remember">
+                </div>
+                <a class="forgot-password" href="{{ url_for('forgot_password') }}">Forgot your password?</a>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        </div>
+    </main>
+{% endblock %}
