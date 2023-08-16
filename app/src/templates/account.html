@@ -2,7 +2,7 @@
 <div class="content-section">
     <div class="account-container">
         <h1>{{ current_user.username }}</h1>
-        {% if current_user.logo_url %}
+        {% if current_user.logo_url != 'default.jpg' %}
         <img
             src="{{ url_for('static', filename=current_user.logo_url) }}"
             alt=""
@@ -29,15 +29,47 @@
             {{ logo_form.submit(class="btn btn-outline-info") }}
         </div>
     </form>
-    <h2>Delete Account</h2>
-    <p>
-        Are you sure you want to delete your account? This action cannot be
-        undone.
-    </p>
 
-    <form method="POST" action="{{ url_for('account') }}">
-        {{ delete_form.csrf_token }} {{ delete_form.submit(class="btn
-        btn-danger") }}
+    <h2>Delete Account</h2>
+    <form method="POST" id="delete-form">
+        {{ delete_form.hidden_tag() }}
+        <div class="form-group">
+            {{ delete_form.submit(class="btn btn-danger",
+            onclick="showConfirmationDialog(event)") }}
+        </div>
+        <div id="confirmation-dialog" style="display: none">
+            {{ delete_form.confirm(class="btn btn-danger") }}
+            <button id="cancel-delete" class="btn btn-secondary">Cancel</button>
+        </div>
     </form>
+
+    <script>
+        function showConfirmationDialog(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Show the confirmation dialog
+            const dialog = document.getElementById("confirmation-dialog");
+            dialog.style.display = "block";
+
+            // Handle cancel delete button
+            const cancelButton = document.getElementById("cancel-delete");
+            cancelButton.addEventListener("click", function () {
+                // Hide the confirmation dialog
+                dialog.style.display = "none";
+            });
+        }
+
+        function confirmAndSubmit(event) {
+            // Set the "confirm" field to true
+            const confirmField = document.createElement("input");
+            confirmField.type = "hidden";
+            confirmField.name = "confirm";
+            confirmField.value = "True";
+            document.getElementById("delete-form").appendChild(confirmField);
+
+            // Submit the form
+            document.getElementById("delete-form").submit();
+        }
+    </script>
 </div>
 {% endblock content %}

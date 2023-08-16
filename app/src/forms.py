@@ -42,4 +42,5 @@ class LogoUploadForm(FlaskForm):
 
 
 class DeleteAccountForm(FlaskForm):
+    confirm = SubmitField("Confirm Delete")
     submit = SubmitField("Delete Account")
