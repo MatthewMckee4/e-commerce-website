@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block content %}
 <div class="content-section">
     <div class="account-container">
-        <h1>Hi, {{ current_user.username }}</h1>
+        <h1>Hi, {{ current_user.first_name }}</h1>
         {% if current_user.logo_url != 'default.jpg' %}
         <img
             src="{{ url_for('static', filename=current_user.logo_url) }}"
@@ -13,18 +13,23 @@
 
     <div class="account-details">
         <h2>Account Details</h2>
-        <h3>Hi, {{ current_user.first_name }}</h3>
         <form method="POST" enctype="multipart/form-data">
-            {{ account_form.hidden_tag() }}
-
+            <div>{{ account_form.hidden_tag() }}</div>
             <div>
-                {{ account_form.first_name.label }} {{
-                account_form.first_name(size=20, value=current_user.first_name)
-                }}
+                {{ account_form.username.label }} {{
+                account_form.username(size=20, value=current_user.username) }}
             </div>
             <div>
-                {{ account_form.last_name.label }} {{
-                account_form.last_name(size=20, value=current_user.last_name) }}
+                {{ account_form.first_name.label }} {% if
+                current_user.first_name %} {{ account_form.first_name(size=20,
+                value=current_user.first_name) }} {% else %} {{
+                account_form.first_name(size=20) }} {% endif %}
+            </div>
+            <div>
+                {{ account_form.last_name.label }} {% if current_user.last_name
+                %} {{ account_form.last_name(size=20,
+                value=current_user.last_name) }} {% else %} {{
+                account_form.last_name(size=20) }} {% endif %}
             </div>
             <div>
                 {{ account_form.email.label }} {{ account_form.email(size=30,
@@ -52,22 +57,23 @@
                 {% else %} {{ account_form.logo(class="form-control
                 form-control-lg") }} {% endif %}
             </div>
-            <div>{{ account_form.submit }}</div>
+            <div class="submit">{{ account_form.submit }}</div>
+        </form>
+
+        <form method="POST">
+            {{ delete_form.hidden_tag() }}
+            <div>
+                {{ delete_form.submit(class="btn btn-danger",
+                onclick="showConfirmationDialog(event)") }}
+            </div>
+            <div id="confirmation-dialog" style="display: none">
+                {{ delete_form.confirm(class="btn btn-danger") }}
+                <button id="cancel-delete" class="btn btn-secondary">
+                    Cancel
+                </button>
+            </div>
         </form>
     </div>
-
-    <h3>Delete Account</h3>
-    <form method="POST" id="delete-form">
-        {{ delete_form.hidden_tag() }}
-        <div class="form-group">
-            {{ delete_form.submit(class="btn btn-danger",
-            onclick="showConfirmationDialog(event)") }}
-        </div>
-        <div id="confirmation-dialog" style="display: none">
-            {{ delete_form.confirm(class="btn btn-danger") }}
-            <button id="cancel-delete" class="btn btn-secondary">Cancel</button>
-        </div>
-    </form>
 
     <script>
         function showConfirmationDialog(event) {
