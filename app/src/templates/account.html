@@ -1,7 +1,7 @@
 {% extends "layout.html" %} {% block content %}
 <div class="content-section">
     <div class="account-container">
-        <h1>{{ current_user.username }}</h1>
+        <h1>Hi, {{ current_user.username }}</h1>
         {% if current_user.logo_url != 'default.jpg' %}
         <img
             src="{{ url_for('static', filename=current_user.logo_url) }}"
@@ -11,26 +11,52 @@
         {% endif %}
     </div>
 
-    <form method="POST" enctype="multipart/form-data" action="">
-        {{ logo_form.hidden_tag() }}
-        <div class="form-group">
-            {{ logo_form.logo.label(class="form-control-label") }} {% if
-            logo_form.logo.errors %} {{ logo_form.logo(class="form-control
-            form-control-lg is-invalid") }}
-            <div class="invalid-feedback">
-                {% for error in form.logo.errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% else %} {{ logo_form.logo(class="form-control form-control-lg")
-            }} {% endif %}
-        </div>
-        <div class="form-group">
-            {{ logo_form.submit(class="btn btn-outline-info") }}
-        </div>
-    </form>
+    <div class="account-details">
+        <h2>Account Details</h2>
+        <h3>Hi, {{ current_user.first_name }}</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {{ account_form.hidden_tag() }}
 
-    <h2>Delete Account</h2>
+            <div>
+                {{ account_form.first_name.label }} {{
+                account_form.first_name(size=20, value=current_user.first_name)
+                }}
+            </div>
+            <div>
+                {{ account_form.last_name.label }} {{
+                account_form.last_name(size=20, value=current_user.last_name) }}
+            </div>
+            <div>
+                {{ account_form.email.label }} {{ account_form.email(size=30,
+                value=current_user.email) }}
+            </div>
+            <div>
+                {{ account_form.bio.label }} {{ account_form.bio(rows=3,
+                cols=40, value=current_user.bio) }}
+            </div>
+            <div>
+                {{ account_form.date_of_birth.label }} {{
+                account_form.date_of_birth(size=10, placeholder="YYYY-MM-DD",
+                value=current_user.date_of_birth) }}
+            </div>
+            <div class="form-group">
+                {{ account_form.logo.label(class="form-control-label") }} {% if
+                account_form.logo.errors %} {{
+                account_form.logo(class="form-control form-control-lg
+                is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.logo.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ account_form.logo(class="form-control
+                form-control-lg") }} {% endif %}
+            </div>
+            <div>{{ account_form.submit }}</div>
+        </form>
+    </div>
+
+    <h3>Delete Account</h3>
     <form method="POST" id="delete-form">
         {{ delete_form.hidden_tag() }}
         <div class="form-group">
