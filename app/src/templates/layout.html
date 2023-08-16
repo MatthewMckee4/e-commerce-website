@@ -64,12 +64,13 @@
                                 class="nav-item nav-link"
                                 href="{{ url_for('account') }}"
                             >
+                                {% if current_user.logo_url != 'default.jpg' %}
                                 <img
                                     src="{{ url_for('static', filename=current_user.logo_url) }}"
                                     alt=""
                                     class="logo-img"
                                 />
-                                Account
+                                {% endif %} Account
                             </a>
                             <a
                                 class="nav-item nav-link"
