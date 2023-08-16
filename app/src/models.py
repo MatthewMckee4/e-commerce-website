@@ -15,11 +15,9 @@ class User(db.Model, UserMixin):
     logo_url = db.Column(db.String(255), default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
 
-    posts = db.relationship("Post", backref="author", lazy=True)
-
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
-    bio = db.Column(db.String(100))
+    bio = db.Column(db.Text)
     date_of_birth = db.Column(db.Date)
 
     def __repr__(self):

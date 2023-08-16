@@ -56,6 +56,11 @@
                                 href="{{ url_for('about') }}"
                                 >About</a
                             >
+                            <a
+                                class="nav-item nav-link"
+                                href="{{ url_for('store') }}"
+                                >Store</a
+                            >
                         </div>
                         <!-- Navbar Right Side -->
                         <div class="navbar-nav">
@@ -100,10 +105,22 @@
                     {% with messages =
                     get_flashed_messages(with_categories=true) %} {% if messages
                     %} {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                    <div class="alert alert-{{ category }}" id="alert-message">
+                        {{ message }}
+                    </div>
                     {% endfor %} {% endif %} {% endwith %} {% block content %}{%
                     endblock %}
                 </div>
+
+                <script>
+                    setTimeout(function () {
+                        var alertMessage =
+                            document.getElementById("alert-message");
+                        if (alertMessage) {
+                            alertMessage.style.display = "none";
+                        }
+                    }, 3000);
+                </script>
                 <div class="col-md-4">
                     <div class="content-section">
                         <h3>Our Sidebar</h3>

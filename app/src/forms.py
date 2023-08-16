@@ -7,9 +7,18 @@ from wtforms import (
     TextAreaField,
     DateField,
 )
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+import re
+from wtforms.validators import (
+    DataRequired,
+    Length,
+    Email,
+    EqualTo,
+    ValidationError,
+    Optional,
+)
 from src.models import User
 from flask_wtf.file import FileField, FileAllowed
+from datetime import datetime
 
 
 class RegistrationForm(FlaskForm):
@@ -35,17 +44,32 @@ class RegistrationForm(FlaskForm):
         if user:
             raise ValidationError("That email is taken. Please choose a different one.")
 
+    def validate_password(self, password):
+        if len(password.data) < 7:
+            raise ValidationError("Password must be at least 7 characters long.")
+
+        if not re.search(r"[A-Z]", password.data):
+            raise ValidationError("Password must contain at least one capital letter.")
+
+        if not re.search(r"[a-z]", password.data):
+            raise ValidationError(
+                "Password must contain at least one lowercase letter."
+            )
+
+        if not re.search(r"\d", password.data):
+            raise ValidationError("Password must contain at least one digit.")
+
+        if not re.search(r"[._!-]", password.data):
+            raise ValidationError(
+                "Password must contain at least one special character (._-!)."
+            )
+
 
 class LoginForm(FlaskForm):
-    email = StringField("Email", validators=[DataRequired(), Email()])
+    email_username = StringField("Email or Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Login")
-
-
-class LogoUploadForm(FlaskForm):
-    logo = FileField("Upload Logo", validators=[FileAllowed(["jpg", "png"])])
-    submit = SubmitField("Upload")
 
 
 class DeleteAccountForm(FlaskForm):
@@ -53,11 +77,26 @@ class DeleteAccountForm(FlaskForm):
     submit = SubmitField("Delete Account")
 
 
+class CustomDateField(DateField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            date_string = valuelist[0]
+            try:
+                self.data = datetime.strptime(date_string, self.format[0]).date()
+            except (ValueError, IndexError):
+                self.data = None
+        else:
+            self.data = None
+
+
 class AccountForm(FlaskForm):
-    first_name = StringField("First Name", validators=[DataRequired()])
-    last_name = StringField("Last Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired(), Email()])
+    username = StringField("Username", validators=[Length(min=2, max=20)])
+    first_name = StringField("First Name")
+    last_name = StringField("Last Name")
+    email = StringField("Email", validators=[Email()])
     bio = TextAreaField("Bio")
-    date_of_birth = DateField("Date of Birth", format="%Y-%m-%d")
+    date_of_birth = CustomDateField(
+        "Date of Birth", format="%Y-%m-%d", validators=[Optional()]
+    )
     logo = FileField("Upload Logo", validators=[FileAllowed(["jpg", "png"])])
     submit = SubmitField("Save Changes")

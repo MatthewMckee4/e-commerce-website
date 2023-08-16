@@ -3,7 +3,6 @@ from src import app, db, bcrypt
 from src.forms import (
     RegistrationForm,
     LoginForm,
-    LogoUploadForm,
     DeleteAccountForm,
     AccountForm,
 )
@@ -39,6 +38,11 @@ def about():
     return render_template("about.html", title="About")
 
 
+@app.route("/store")
+def store():
+    return render_template("store.html", title="Store")
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
@@ -64,7 +68,11 @@ def login():
         return redirect(url_for("home"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email_username.data).first()
+
+        if not user:
+            user = User.query.filter_by(username=form.email_username.data).first()
+
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get("next")
@@ -85,7 +93,6 @@ def logout():
 def account():
     delete_form = DeleteAccountForm()
     account_form = AccountForm()
-
     if (
         delete_form.confirm.data
         and delete_form.validate_on_submit()
@@ -99,8 +106,9 @@ def account():
 
     elif account_form.validate_on_submit():
         user = User.query.get(current_user.id)
-        print(user.bio)
         if user:
+            if account_form.username.data:
+                user.username = account_form.username.data
             if account_form.first_name.data:
                 user.first_name = account_form.first_name.data
             if account_form.last_name.data:
@@ -110,6 +118,7 @@ def account():
             if account_form.bio.data:
                 user.bio = account_form.bio.data
             if account_form.date_of_birth.data:
+                print(account_form.date_of_birth.data)
                 user.date_of_birth = account_form.date_of_birth.data
             if account_form.logo.data:
                 logo_filename = secure_filename(account_form.logo.data.filename)
