@@ -45,30 +45,15 @@
 
     <script>
         function showConfirmationDialog(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
 
-            // Show the confirmation dialog
             const dialog = document.getElementById("confirmation-dialog");
             dialog.style.display = "block";
 
-            // Handle cancel delete button
             const cancelButton = document.getElementById("cancel-delete");
             cancelButton.addEventListener("click", function () {
-                // Hide the confirmation dialog
                 dialog.style.display = "none";
             });
-        }
-
-        function confirmAndSubmit(event) {
-            // Set the "confirm" field to true
-            const confirmField = document.createElement("input");
-            confirmField.type = "hidden";
-            confirmField.name = "confirm";
-            confirmField.value = "True";
-            document.getElementById("delete-form").appendChild(confirmField);
-
-            // Submit the form
-            document.getElementById("delete-form").submit();
         }
     </script>
 </div>
