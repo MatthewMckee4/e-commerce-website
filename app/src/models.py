@@ -14,10 +14,16 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     logo_url = db.Column(db.String(255), default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
+
     posts = db.relationship("Post", backref="author", lazy=True)
 
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    bio = db.Column(db.String(100))
+    date_of_birth = db.Column(db.Date)
+
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+        return f"User({self.id}, {self.username}, {self.email})"
 
 
 class Post(db.Model):
