@@ -1,5 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import (
+    StringField,
+    PasswordField,
+    SubmitField,
+    BooleanField,
+    TextAreaField,
+    DateField,
+)
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from src.models import User
 from flask_wtf.file import FileField, FileAllowed
@@ -44,3 +51,13 @@ class LogoUploadForm(FlaskForm):
 class DeleteAccountForm(FlaskForm):
     confirm = SubmitField("Confirm Delete")
     submit = SubmitField("Delete Account")
+
+
+class AccountForm(FlaskForm):
+    first_name = StringField("First Name", validators=[DataRequired()])
+    last_name = StringField("Last Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    bio = TextAreaField("Bio")
+    date_of_birth = DateField("Date of Birth", format="%Y-%m-%d")
+    logo = FileField("Upload Logo", validators=[FileAllowed(["jpg", "png"])])
+    submit = SubmitField("Save Changes")

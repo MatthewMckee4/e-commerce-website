@@ -1,6 +1,12 @@
 from flask import render_template, url_for, flash, redirect, request
 from src import app, db, bcrypt
-from src.forms import RegistrationForm, LoginForm, LogoUploadForm, DeleteAccountForm
+from src.forms import (
+    RegistrationForm,
+    LoginForm,
+    LogoUploadForm,
+    DeleteAccountForm,
+    AccountForm,
+)
 from src.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
@@ -77,19 +83,10 @@ def logout():
 @app.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
-    logo_form = LogoUploadForm()
     delete_form = DeleteAccountForm()
-    print(delete_form.confirm.data)
+    account_form = AccountForm()
 
-    if logo_form.validate_on_submit() and logo_form.logo.data:
-        logo_filename = secure_filename(logo_form.logo.data.filename)
-        logo_path = os.path.join(app.root_path, "static", "logos", logo_filename)
-        logo_form.logo.data.save(logo_path)
-        current_user.logo_url = f"logos/{logo_filename}"
-        db.session.commit()
-        flash("Logo uploaded successfully!", "success")
-
-    elif (
+    if (
         delete_form.confirm.data
         and delete_form.validate_on_submit()
         and request.method == "POST"
@@ -100,6 +97,36 @@ def account():
         flash("Your account has been deleted.", "success")
         return redirect(url_for("home"))
 
+    elif account_form.validate_on_submit():
+        user = User.query.get(current_user.id)
+        print(user.bio)
+        if user:
+            if account_form.first_name.data:
+                user.first_name = account_form.first_name.data
+            if account_form.last_name.data:
+                user.last_name = account_form.last_name.data
+            if account_form.email.data:
+                user.email = account_form.email.data
+            if account_form.bio.data:
+                user.bio = account_form.bio.data
+            if account_form.date_of_birth.data:
+                user.date_of_birth = account_form.date_of_birth.data
+            if account_form.logo.data:
+                logo_filename = secure_filename(account_form.logo.data.filename)
+                logo_path = os.path.join(
+                    app.root_path, "static", "logos", logo_filename
+                )
+                account_form.logo.data.save(logo_path)
+                user.logo_url = f"logos/{logo_filename}"
+
+            db.session.commit()
+
+            flash("Account details updated successfully", "success")
+        else:
+            flash("User not found", "error")
     return render_template(
-        "account.html", title="Account", logo_form=logo_form, delete_form=delete_form
+        "account.html",
+        title="Account",
+        delete_form=delete_form,
+        account_form=account_form,
     )
