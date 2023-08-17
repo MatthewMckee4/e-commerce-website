@@ -15,7 +15,7 @@
         <button class="btn-buy">Buy Now</button>
     </div>
 </div>
-
+{% if not seller %}
 <div class="account login-register-form">
     <h3>{{ current_user.username }}</h3>
     <form
@@ -63,7 +63,7 @@
         {% endif %}
     </form>
 </div>
-
+{% else %}{% endif %}
 <div class="review-list">
     <h3>Reviews</h3>
     {% for review in product.reviews %}

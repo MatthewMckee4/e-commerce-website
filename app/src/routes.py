@@ -294,6 +294,7 @@ def product(product_id):
         delete_review_form=delete_review_form,
         user_review=user_review,
         average_rating=average_rating,
+        seller=product.seller_id == current_user.seller_info.id,
     )
 
 
