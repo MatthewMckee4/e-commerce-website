@@ -1,3 +1,29 @@
 {% extends "layout.html" %} {% block content %}
 <h1>Store</h1>
+<div class="sorting">
+    <form action="{{ url_for('store') }}" method="get">
+        <label for="sort">Sort by:</label>
+        <select id="sort" name="sort" onchange="this.form.submit()">
+            <option value="name_asc" {% if sort_option == 'name_asc' %} selected {% endif %}>Name (Ascending)</option>
+            <option value="name_desc" {% if sort_option == 'name_desc' %} selected {% endif %}>Name (Descending)</option>
+            <option value="price_asc" {% if sort_option == 'price_asc' %} selected {% endif %}>Price (Ascending)</option>
+            <option value="price_desc" {% if sort_option == 'price_desc' %} selected {% endif %}>Price (Descending)</option>
+        </select>
+    </form>
+</div>
+<div class="product-grid">
+    {% for product in products %}
+    <div class="product-card">
+        <a href="{{ url_for('product', product_id=product.id) }}">
+            <img
+            src="{{ url_for('static', filename=product.image_url) }}"
+            alt="{{ product.name }}"
+            class="product-image-inner"
+            />
+            <h4>{{ product.name }} - £{{ product.price }}</h4>
+            <p>{{ product.description }}</p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
 {% endblock content %}

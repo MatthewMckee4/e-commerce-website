@@ -6,6 +6,9 @@ from wtforms import (
     BooleanField,
     TextAreaField,
     DateField,
+    FloatField,
+    IntegerField,
+    HiddenField,
 )
 import re
 from wtforms.validators import (
@@ -15,6 +18,7 @@ from wtforms.validators import (
     EqualTo,
     ValidationError,
     Optional,
+    NumberRange,
 )
 from src.models import User
 from flask_wtf.file import FileField, FileAllowed
@@ -100,3 +104,42 @@ class AccountForm(FlaskForm):
     )
     logo = FileField("Upload Logo", validators=[FileAllowed(["jpg", "png"])])
     submit = SubmitField("Save Changes")
+
+
+class SellerForm(FlaskForm):
+    seller_name = StringField("Seller Name", validators=[Length(min=2, max=20)])
+    phone = StringField("Phone Number", validators=[Length(min=2, max=14)])
+    submit = SubmitField("Become A Seller")
+    update = SubmitField("Save Changes")
+
+    def validate_phone(self, phone):
+        if phone.data and (not phone.data.isdigit() or len(phone.data) > 15):
+            raise ValidationError(
+                "Invalid phone number. Please enter a valid phone number."
+            )
+
+
+class ProductForm(FlaskForm):
+    name = StringField("Product Name", validators=[DataRequired(), Length(max=40)])
+    description = TextAreaField("Description", validators=[DataRequired()])
+    price = FloatField("Price", validators=[DataRequired(), NumberRange(min=0)])
+    image_url = FileField(
+        "Upload Image", validators=[FileAllowed(["jpg", "png"]), DataRequired()]
+    )
+    quantity = IntegerField("Quantity", validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField("Add Product")
+
+    def validate_price(self, price):
+        disallowed_symbols = ["$", "£", "€", "¥"]  # Add more symbols if needed
+        if any(c in str(price.data) for c in disallowed_symbols):
+            raise ValidationError("Price cannot contain currency symbols.")
+
+
+class CommentForm(FlaskForm):
+    comment_text = TextAreaField("Add A Comment", validators=[DataRequired()])
+    submit = SubmitField("Post Comment")
+
+
+class DeleteCommentForm(FlaskForm):
+    comment_id = StringField("Comment ID")
+    submit = SubmitField("Delete")
