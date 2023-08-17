@@ -24,6 +24,7 @@
 <div class="account">
     <h3>Seller Account Details</h3>
     <form method="POST">
+        <input type="hidden" name="form" value="seller" />
         {{ seller_form.hidden_tag() }}
         <div class="form-group">
             {{ seller_form.seller_name.label }} {% if
@@ -56,6 +57,7 @@
     <div class="form">
         <h3>Add Product</h3>
         <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="form" value="product" />
             {{ product_form.hidden_tag() }}
             <div class="form-group">
                 {{ product_form.name.label }} {% if product_form.name.errors %}
@@ -127,8 +129,16 @@
                 <p class="product-price">£{{ product.price }}</p>
                 <p class="product-description">{{ product.description }}</p>
             </div>
-            <form method="POST">
-                <input type="text" />
+            <form method="POST" class="delete-product-form">
+                <input type="hidden" name="form" value="delete" />
+                {{ delete_product_form.hidden_tag() }}
+                <div>
+                    {{ delete_product_form.product_id(value=product.id,
+                    class='hidden-field') }}
+                </div>
+                <div class="delete-button">
+                    {{ delete_product_form.submit }}
+                </div>
             </form>
         </a>
     </div>
