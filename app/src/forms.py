@@ -106,6 +106,26 @@ class AccountForm(FlaskForm):
     logo = FileField("Upload Logo", validators=[FileAllowed(["jpg", "png"])])
     submit = SubmitField("Save Changes")
 
+    def __init__(self, current_user, *args, **kwargs):
+        super(AccountForm, self).__init__(*args, **kwargs)
+        self.current_user = current_user
+
+    def validate_username(self, username):
+        if username.data != self.current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError(
+                    "That username is taken. Please choose a different one."
+                )
+
+    def validate_email(self, email):
+        if email.data != self.current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError(
+                    "That email is taken. Please choose a different one."
+                )
+
 
 class SellerForm(FlaskForm):
     seller_name = StringField("Seller Name", validators=[Length(min=2, max=20)])
@@ -113,10 +133,27 @@ class SellerForm(FlaskForm):
     submit = SubmitField("Become A Seller")
     update = SubmitField("Save Changes")
 
+    def __init__(self, current_user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.current_user = current_user
+
     def validate_phone(self, phone):
         if phone.data and (not phone.data.isdigit() or len(phone.data) > 15):
             raise ValidationError(
                 "Invalid phone number. Please enter a valid phone number."
+            )
+
+        if (
+            self.current_user.is_seller
+            and self.phone.data == self.current_user.phone
+            and self.update.data
+        ):
+            return
+
+        existing_user_with_phone = User.query.filter_by(phone=phone.data).first()
+        if existing_user_with_phone and existing_user_with_phone != self.current_user:
+            raise ValidationError(
+                "This phone number is already associated with another user."
             )
 
 
@@ -160,6 +197,11 @@ class ReviewForm(FlaskForm):
                 raise ValidationError("Must be Less than or Equal to 100")
 
 
-class DeleteReviewtForm(FlaskForm):
+class DeleteReviewForm(FlaskForm):
     review_id = StringField("Review ID")
+    submit = SubmitField("Delete")
+
+
+class DeleteProductForm(FlaskForm):
+    product_id = StringField("Product ID")
     submit = SubmitField("Delete")

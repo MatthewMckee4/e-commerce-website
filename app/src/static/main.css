@@ -8,6 +8,9 @@ main {
 a {
     text-decoration: none;
 }
+footer {
+    margin-bottom: 200px;
+}
 
 /* Navbar */
 nav {
@@ -220,7 +223,7 @@ form .delete-button input[type="submit"] {
 }
 
 .product-card:hover {
-    transform: translateY(-10px); /* Move up by 5px on hover */
+    transform: translateY(-3px); /* Move up by 5px on hover */
 }
 .product-card a {
     text-decoration: none;
