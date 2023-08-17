@@ -8,7 +8,8 @@ from src.forms import (
     SellerForm,
     ProductForm,
     ReviewForm,
-    DeleteReviewtForm,
+    DeleteReviewForm,
+    DeleteProductForm,
 )
 from src.models import User, Product, Seller, Review
 from flask_login import login_user, current_user, logout_user, login_required
@@ -48,10 +49,13 @@ def store():
 
 @app.route("/seller_account", methods=["GET", "POST"])
 def seller_account():
-    seller_form = SellerForm()
+    seller_form = SellerForm(current_user=current_user)
     product_form = ProductForm()
+    delete_product_form = DeleteProductForm()
+    form = request.form.get("form")
+
     if request.method == "POST":
-        if seller_form.update.data and seller_form.validate_on_submit():
+        if form == "seller" and seller_form.validate_on_submit():
             user = User.query.get(current_user.id)
             # seller = Seller.query.get(current_user.id)
             if user:
@@ -63,7 +67,7 @@ def seller_account():
 
                 flash("Seller Account details updated successfully", "success")
 
-        if product_form.submit.data and product_form.validate_on_submit():
+        elif form == "product" and product_form.validate_on_submit():
             image_url = save_uploaded_file(
                 product_form.image_url.data, "product_images"
             )
@@ -81,11 +85,22 @@ def seller_account():
 
             flash("Succesfully Added product", "success")
 
+        elif form == "delete" and delete_product_form.validate_on_submit():
+            product_id_to_delete = delete_product_form.product_id.data
+            product_to_delete = Product.query.get(product_id_to_delete)
+            if product_to_delete and product_to_delete.seller_id == current_user.id:
+                db.session.delete(product_to_delete)
+                db.session.commit()
+                flash("Product deleted successfully", "success")
+            else:
+                flash("You are not authorized to delete this product", "danger")
+
     return render_template(
         "seller_account.html",
         title="Seller Account",
         seller_form=seller_form,
         product_form=product_form,
+        delete_product_form=delete_product_form,
         products=Product.query.all(),
     )
 
@@ -161,7 +176,7 @@ def logout():
 def account():
     delete_form = DeleteAccountForm()
     user = User.query.get(current_user.id)
-    account_form = AccountForm(bio=user.bio)
+    account_form = AccountForm(current_user=current_user)
     if request.method == "POST":
         if delete_form.confirm.data and delete_form.validate_on_submit():
             db.session.delete(current_user)
@@ -214,7 +229,7 @@ def account():
 def product(product_id):
     product = Product.query.filter_by(id=product_id).first()
     review_form = ReviewForm()
-    delete_review_form = DeleteReviewtForm()
+    delete_review_form = DeleteReviewForm()
     form = request.form.get("form")
     if request.method == "POST":
         if form == "post" and review_form.validate_on_submit():
