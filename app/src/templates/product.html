@@ -9,59 +9,85 @@
     <div class="product-info">
         <h2>{{ product.name }} - £{{ product.price }}</h2>
         <p>Quantity: {{ product.quantity }}</p>
+        <p>Average Rating: {{ average_rating }}</p>
     </div>
     <div class="product-actions">
         <button class="btn-buy">Buy Now</button>
-        <div class="rating">
-            <span>Rate:</span>
-            <select id="rating-select">
-                <option value="5">5 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="2">2 Stars</option>
-                <option value="1">1 Star</option>
-            </select>
-            <button class="btn-rate">Rate</button>
-        </div>
     </div>
 </div>
-
-<div class="comments">
+{% if not seller %}
+<div class="account login-register-form">
+    <h3>{{ current_user.username }}</h3>
     <form
         method="POST"
         action="{{ url_for('product', product_id=product.id) }}"
     >
-        {{ comment_form.hidden_tag() }}
+        {% if not user_review %}
+        <input type="hidden" name="form" value="post" />
+        {% else %}
+        <input type="hidden" name="form" value="update" />
+        {% endif %} {{ review_form.hidden_tag() }}
         <div class="form-group">
-            {{ comment_form.comment_text.label }} {{
-            comment_form.comment_text(class="form-control") }}
+            {{ review_form.rating.label }} {% if review_form.rating.errors %} {{
+            review_form.rating(class="form-control is-invalid rating") }}
+            <div class="invalid-feedback">
+                {% for error in review_form.rating.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {% if user_review %} {{
+            review_form.rating(class="form-control rating",
+            value=user_review.rating) }} {% else %} {{
+            review_form.rating(class="form-control rating") }} {% endif %}{%
+            endif %}
         </div>
         <div class="form-group">
-            {{ comment_form.submit(class="btn btn-primary") }}
+            {{ review_form.text.label }} {% if review_form.text.errors %} {{
+            review_form.text(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in review_form.text.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {% if user_review %} {{
+            review_form.text(class="form-control", value=user_review.text) }} {%
+            else %} {{ review_form.text(class="form-control") }} {% endif %}{%
+            endif %}
         </div>
+        {% if not user_review %}
+        <div class="form-group">{{ review_form.submit }}</div>
+        {% else %}
+        <div class="form-group">
+            <input type="submit" name="form" value="Update" />
+        </div>
+        {% endif %}
     </form>
-    <h3>Comments</h3>
-    <div class="comment-list">
-        {% for comment in product.comments %}
-        <div class="comment-box">
-            <div class="comment-text">{{ comment.text }}</div>
-            {% if comment.user == current_user %}
-            <form
-                method="POST"
-                action="{{ url_for('product', product_id=product.id) }}"
-            >
-                {{ delete_comment_form.hidden_tag() }}
-                <hidden>
-                    {{ delete_comment_form.comment_id(value=comment.id,
-                    class='hidden-field') }}
-                </hidden>
-                <div class="submit">
-                    {{ delete_comment_form.submit(class='btn-danger') }}
-                </div>
-            </form>
-            {% endif %}
+</div>
+{% else %}{% endif %}
+<div class="review-list">
+    <h3>Reviews</h3>
+    {% for review in product.reviews %}
+    <div class="review-box">
+        <div class="review-user">
+            {{ review.user.username }} {% if review.rating %} - {{ review.rating
+            }}/100{% endif %}
         </div>
-        {% endfor %}
+        <div class="review-text">{{ review.text }}</div>
+        {% if review.user == current_user %}
+        <form
+            method="POST"
+            action="{{ url_for('product', product_id=product.id, form='delete') }}"
+        >
+            <input type="hidden" name="form" value="delete" />
+            {{ delete_review_form.hidden_tag() }}
+            <div>
+                {{ delete_review_form.review_id(value=review.id,
+                class='hidden-field') }}
+            </div>
+            <div class="delete-button">{{ delete_review_form.submit }}</div>
+        </form>
+        {% endif %}
     </div>
+    {% endfor %}
 </div>
 {% endblock content %}

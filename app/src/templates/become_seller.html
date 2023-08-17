@@ -1,15 +1,16 @@
 {% extends "layout.html" %} {% block content %}
-<div class="content-section">
+<div class="login-register-form">
     <div class="form">
         <h3>Become A Seller</h3>
         <form method="POST">
             {{ seller_form.hidden_tag() }}
-            <div>
+            <div class="form-group">
                 {{ seller_form.seller_name.label }} {{
-                seller_form.seller_name(size=20)}}
+                seller_form.seller_name(class="form-control",size=20)}}
             </div>
-            <div>
-                {{ seller_form.phone.label }} {{ seller_form.phone(size=20) }}
+            <div class="form-group">
+                {{ seller_form.phone.label }} {{
+                seller_form.phone(class="form-control",size=20) }}
             </div>
 
             <div class="submit">{{ seller_form.submit }}</div>

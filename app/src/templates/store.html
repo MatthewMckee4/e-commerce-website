@@ -10,18 +10,24 @@
             <option value="price_desc" {% if sort_option == 'price_desc' %} selected {% endif %}>Price (Descending)</option>
         </select>
     </form>
+    <br>
 </div>
 <div class="product-grid">
     {% for product in products %}
     <div class="product-card">
         <a href="{{ url_for('product', product_id=product.id) }}">
-            <img
-            src="{{ url_for('static', filename=product.image_url) }}"
-            alt="{{ product.name }}"
-            class="product-image-inner"
-            />
-            <h4>{{ product.name }} - £{{ product.price }}</h4>
-            <p>{{ product.description }}</p>
+            <div class="product-image-container">
+                <img
+                    src="{{ url_for('static', filename=product.image_url) }}"
+                    alt="{{ product.name }}"
+                    class="product-image-inner"
+                />
+            </div>
+            <div class="product-details">
+                <h4 class="product-title">{{ product.name }}</h4>
+                <p class="product-price">£{{ product.price }}</p>
+                <p class="product-description">{{ product.description }}</p>
+            </div>
         </a>
     </div>
     {% endfor %}

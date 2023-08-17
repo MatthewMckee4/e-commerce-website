@@ -19,6 +19,7 @@ from wtforms.validators import (
     ValidationError,
     Optional,
     NumberRange,
+    Regexp,
 )
 from src.models import User
 from flask_wtf.file import FileField, FileAllowed
@@ -135,11 +136,30 @@ class ProductForm(FlaskForm):
             raise ValidationError("Price cannot contain currency symbols.")
 
 
-class CommentForm(FlaskForm):
-    comment_text = TextAreaField("Add A Comment", validators=[DataRequired()])
-    submit = SubmitField("Post Comment")
+class ReviewForm(FlaskForm):
+    text = StringField("Add A Comment")
+    rating = StringField(
+        "Enter a Rating (0-100)",
+        validators=[
+            Length(min=0, max=3, message="Rating must be between 0 and 100."),
+            Regexp("^(|[0-9]+)$", message="Rating must be a numeric value."),
+        ],
+        render_kw={"placeholder": "0-100"},
+    )
+    submit = SubmitField("Post Review")
+
+    def validate_rating(self, rating):
+        try:
+            int_rating = int(float(rating.data))
+            if int_rating != float(rating.data):
+                raise ValidationError("Must be a Whole Number")
+        except:
+            pass
+        else:
+            if float(rating.data) > 100:
+                raise ValidationError("Must be Less than or Equal to 100")
 
 
-class DeleteCommentForm(FlaskForm):
-    comment_id = StringField("Comment ID")
+class DeleteReviewtForm(FlaskForm):
+    review_id = StringField("Review ID")
     submit = SubmitField("Delete")
