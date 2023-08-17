@@ -7,10 +7,10 @@ from src.forms import (
     AccountForm,
     SellerForm,
     ProductForm,
-    CommentForm,
-    DeleteCommentForm,
+    ReviewForm,
+    DeleteReviewtForm,
 )
-from src.models import User, Product, Seller, Comment
+from src.models import User, Product, Seller, Review
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 import os
@@ -159,21 +159,17 @@ def logout():
 @login_required
 def account():
     delete_form = DeleteAccountForm()
-    if (
-        delete_form.confirm.data
-        and delete_form.validate_on_submit()
-        and request.method == "POST"
-    ):
-        db.session.delete(current_user)
-        db.session.commit()
-        logout_user()
-        flash("Your account has been deleted.", "success")
-        return redirect(url_for("home"))
-
     user = User.query.get(current_user.id)
     account_form = AccountForm(bio=user.bio)
-    if user:
-        if account_form.validate_on_submit():
+    if request.method == "POST":
+        if delete_form.confirm.data and delete_form.validate_on_submit():
+            db.session.delete(current_user)
+            db.session.commit()
+            logout_user()
+            flash("Your account has been deleted.", "success")
+            return redirect(url_for("home"))
+
+        if account_form.submit.data and account_form.validate_on_submit():
             if account_form.username.data or (
                 not account_form.username.data and user.username
             ):
@@ -204,8 +200,7 @@ def account():
             db.session.commit()
 
             flash("Account details updated successfully", "success")
-    else:
-        flash("User not found", "error")
+
     return render_template(
         "account.html",
         title="Account",
@@ -217,39 +212,80 @@ def account():
 @app.route("/product/<int:product_id>", methods=["GET", "POST"])
 def product(product_id):
     product = Product.query.filter_by(id=product_id).first()
-    comment_form = CommentForm()
-    delete_comment_form = (
-        DeleteCommentForm()
-    )  # Create an instance of the DeleteCommentForm
-    if comment_form.validate_on_submit():
-        if comment_form.validate_on_submit():
-            comment = Comment(
-                text=comment_form.comment_text.data, product=product, user=current_user
-            )
-            db.session.add(comment)
-            db.session.commit()
-            flash("Comment posted successfully!", "success")
-        # Create and save the comment
+    review_form = ReviewForm()
+    delete_review_form = DeleteReviewtForm()
+    form = request.form.get("form")
+    if request.method == "POST":
+        if form == "post" and review_form.validate_on_submit():
+            existing_review = Review.query.filter_by(
+                product_id=product.id, user_id=current_user.id
+            ).first()
 
-    elif delete_comment_form.validate_on_submit():
-        comment_id_to_delete = delete_comment_form.comment_id.data
-        comment_to_delete = Comment.query.get_or_404(comment_id_to_delete)
-        if comment_to_delete.user == current_user:
-            db.session.delete(comment_to_delete)
-            db.session.commit()
-            flash("Comment deleted successfully.", "success")
-        else:
-            flash("You are not authorized to delete this comment.", "error")
-    if product:
-        return render_template(
-            "product.html",
-            title=product.name,
-            product=product,
-            comment_form=comment_form,
-            delete_comment_form=delete_comment_form,
-        )
-    else:
-        return "Product not found or unauthorized."
+            if existing_review:
+                flash("You have already reviewed this product.", "error")
+            else:
+                review = Review(
+                    text=review_form.text.data,
+                    rating=review_form.rating.data,
+                    product=product,
+                    user=current_user,
+                )
+                db.session.add(review)
+                db.session.commit()
+                flash("Review posted successfully!", "success")
+        elif form == "update" and review_form.validate_on_submit():
+            existing_review = Review.query.filter_by(
+                product_id=product.id, user_id=current_user.id
+            ).first()
+
+            if existing_review:
+                if review_form.text.data or (
+                    not review_form.text.data and existing_review.text
+                ):
+                    existing_review.text = review_form.text.data
+
+                if review_form.rating.data or (
+                    not review_form.rating.data and existing_review.rating
+                ):
+                    existing_review.rating = review_form.rating.data
+
+                if not review_form.text.data and not review_form.rating.data:
+                    db.session.delete(existing_review)
+                    flash("Review deleted successfully.", "success")
+                else:
+                    flash("Review updated successfully!", "success")
+                db.session.commit()
+            else:
+                flash("You have not reviewed this product yet.", "error")
+        elif form == "delete" and delete_review_form.validate_on_submit():
+            print("deleting review")
+            review_to_delete = Review.query.get_or_404(
+                delete_review_form.review_id.data
+            )
+
+            if review_to_delete.user == current_user:
+                db.session.delete(review_to_delete)
+                db.session.commit()
+                flash("Review deleted successfully.", "success")
+            else:
+                flash("You are not authorized to delete this review.", "error")
+
+    reviews = Review.query.filter_by(product_id=product.id).all()
+    user_review = None
+    for review in reviews:
+        if review.user_id == current_user.id:
+            user_review = review
+            break
+
+    return render_template(
+        "product.html",
+        title=product.name,
+        product=product,
+        review_form=review_form,
+        delete_review_form=delete_review_form,
+        reviews=reviews,
+        user_review=user_review,
+    )
 
 
 def save_uploaded_file(file_storage, directory):

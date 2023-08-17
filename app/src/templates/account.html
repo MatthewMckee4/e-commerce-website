@@ -1,8 +1,10 @@
 {% extends "layout.html" %} {% block content %}
-<div class="content-section">
-    <div class="account-container">
-        <div class="left-content">
+<div class="account-info">
+    <div class="user-details">
+        <div class="user-message">
             <h1>Hi, {{ current_user.username }}</h1>
+        </div>
+        <div class="user-logo">
             {% if current_user.logo_url != 'default.jpg' %}
             <img
                 src="{{ url_for('static', filename=current_user.logo_url) }}"
@@ -11,81 +13,82 @@
             />
             {% endif %}
         </div>
-        <div class="right-content">
-            {% if current_user.is_seller == False %}
-            <h4>
-                <a href="{{ url_for('become_seller') }}">Become a Seller</a>
-            </h4>
-            {% else %}
-            <h4>
-                <a href="{{ url_for('seller_account') }}">Seller Account</a>
-            </h4>
-            {% endif %}
-        </div>
     </div>
+    <div class="seller-link">
+        {% if current_user.is_seller == False %}
+        <h4><a href="{{ url_for('become_seller') }}">Become a Seller</a></h4>
+        {% else %}
+        <h4><a href="{{ url_for('seller_account') }}">Seller Account</a></h4>
+        {% endif %}
+    </div>
+</div>
 
-    <div class="form">
-        <h3>Account Details</h3>
-        <form method="POST" enctype="multipart/form-data">
-            {{ account_form.hidden_tag() }}
-            <div>
-                {{ account_form.username.label }} {{
-                account_form.username(size=20, value=current_user.username) }}
+<div class="account">
+    <h3>Account Details</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {{ account_form.hidden_tag() }}
+        <div class="form-group">
+            {{ account_form.username.label }} {{
+            account_form.username(class="form-control", size=20,
+            value=current_user.username) }}
+        </div>
+        <div class="form-group">
+            {{ account_form.first_name.label }} {% if current_user.first_name %}
+            {{ account_form.first_name(class="form-control", size=20,
+            value=current_user.first_name) }} {% else %} {{
+            account_form.first_name(class="form-control", size=20) }} {% endif
+            %}
+        </div>
+        <div class="form-group">
+            {{ account_form.last_name.label }} {% if current_user.last_name %}
+            {{ account_form.last_name(class="form-control", size=20,
+            value=current_user.last_name) }} {% else %} {{
+            account_form.last_name(class="form-control", size=20) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ account_form.email.label }} {{
+            account_form.email(class="form-control", size=30,
+            value=current_user.email) }}
+        </div>
+        <div class="form-group">
+            {{ account_form.bio.label }} {{
+            account_form.bio(class="form-control", rows=3, cols=40,
+            value=current_user.bio) }}
+        </div>
+        <div class="form-group">
+            {{ account_form.date_of_birth.label }} {{
+            account_form.date_of_birth(class="form-control", size=10,
+            placeholder="YYYY-MM-DD", value=current_user.date_of_birth) }}
+        </div>
+        <div class="form-group file-upload">
+            {{ account_form.logo.label }} {% if account_form.logo.errors %} {{
+            account_form.logo(class="form-control file-form-control is-invalid")
+            }}
+            <div class="invalid-feedback">
+                {% for error in account_form.logo.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
             </div>
-            <div>
-                {{ account_form.first_name.label }} {% if
-                current_user.first_name %} {{ account_form.first_name(size=20,
-                value=current_user.first_name) }} {% else %} {{
-                account_form.first_name(size=20) }} {% endif %}
-            </div>
-            <div>
-                {{ account_form.last_name.label }} {% if current_user.last_name
-                %} {{ account_form.last_name(size=20,
-                value=current_user.last_name) }} {% else %} {{
-                account_form.last_name(size=20) }} {% endif %}
-            </div>
-            <div>
-                {{ account_form.email.label }} {{ account_form.email(size=30,
-                value=current_user.email) }}
-            </div>
-            <div>
-                {{ account_form.bio.label }} {{ account_form.bio(rows=3,
-                cols=40, value=current_user.bio) }}
-            </div>
-            <div>
-                {{ account_form.date_of_birth.label }} {{
-                account_form.date_of_birth(size=10, placeholder="YYYY-MM-DD",
-                value=current_user.date_of_birth) }}
-            </div>
-            <div class="file-upload">
-                {{ account_form.logo.label(class="form-control-label") }} {% if
-                account_form.logo.errors %} {{
-                account_form.logo(class="form-control form-control-lg
-                is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in account_form.logo.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %} {{ account_form.logo(class="form-control
-                form-control-lg") }} {% endif %}
-            </div>
-            <div class="submit">{{ account_form.submit }}</div>
-        </form>
-        <form method="POST">
-            {{ delete_form.hidden_tag() }}
-            <div>
-                {{ delete_form.submit(class="btn btn-danger",
-                onclick="showConfirmationDialog(event)") }}
-            </div>
-            <div id="confirmation-dialog" style="display: none">
-                {{ delete_form.confirm(class="btn btn-danger") }}
-                <button id="cancel-delete" class="btn btn-secondary">
-                    Cancel
-                </button>
-            </div>
-        </form>
-    </div>
+            {% else %} {{ account_form.logo(class="form-control
+            file-form-control") }} {% endif %}
+        </div>
+
+        <div class="form-group">{{ account_form.submit }}</div>
+    </form>
+    <form method="POST">
+        {{ delete_form.hidden_tag() }}
+        <div class="delete-button">
+            {{ delete_form.submit( onclick="showConfirmationDialog(event)") }}
+        </div>
+        <div
+            class="delete-button"
+            id="confirmation-dialog"
+            style="display: none"
+        >
+            {{ delete_form.confirm(class="delete-button") }}
+            <button id="cancel-delete">Cancel</button>
+        </div>
+    </form>
 </div>
 
 <script>

@@ -1,8 +1,10 @@
 {% extends "layout.html" %} {% block content %}
-<div class="content-section">
-    <div class="account-container">
-        <div class="left-content">
+<div class="account-info">
+    <div class="user-details">
+        <div class="user-message">
             <h1>Hi, {{ current_user.seller_info.name }}</h1>
+        </div>
+        <div class="user-logo">
             {% if current_user.logo_url != 'default.jpg' %}
             <img
                 src="{{ url_for('static', filename=current_user.logo_url) }}"
@@ -11,64 +13,60 @@
             />
             {% endif %}
         </div>
-        <div class="right-content">
-            <h4>
-                <a href="{{ url_for('account') }}">Account</a>
-            </h4>
-        </div>
     </div>
-
-    <div class="form">
-        <h3>Seller Account Details</h3>
-        <form method="POST">
-            {{ seller_form.hidden_tag() }}
-            <div class="form-group">
-                {{ seller_form.seller_name.label(class="form-control-label") }}
-                {% if seller_form.seller_name.errors %} {{
-                seller_form.seller_name(class="form-control form-control-lg
-                is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in seller_form.seller_name.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %} {{ seller_form.seller_name(class="form-control
-                form-control-lg", size=20, value=current_user.seller_info.name)
-                }} {% endif %}
-            </div>
-            <div class="form-group">
-                {{ seller_form.phone.label }} {% if seller_form.phone.errors %}
-                {{ seller_form.phone(class="form-control is-invalid", size=20,
-                value=current_user.phone) }}
-                <div class="invalid-feedback">
-                    {% for error in seller_form.phone.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %} {{ seller_form.phone(class="form-control", size=20,
-                value=current_user.phone) }} {% endif %}
-            </div>
-            <div class="submit">{{ seller_form.update }}</div>
-        </form>
+    <div class="right-content">
+        <h4>
+            <a href="{{ url_for('account') }}">Account</a>
+        </h4>
     </div>
 </div>
-<div class="content-section">
+
+<div class="account">
+    <h3>Seller Account Details</h3>
+    <form method="POST">
+        {{ seller_form.hidden_tag() }}
+        <div class="form-group">
+            {{ seller_form.seller_name.label }} {% if
+            seller_form.seller_name.errors %} {{
+            seller_form.seller_name(class="form-control is-invalid") }}
+            <div class="invalid-feedback">
+                {% for error in seller_form.seller_name.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ seller_form.seller_name(class="form-control ",
+            size=20, value=current_user.seller_info.name) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ seller_form.phone.label }} {% if seller_form.phone.errors %} {{
+            seller_form.phone(class="form-control is-invalid", size=20,
+            value=current_user.phone) }}
+            <div class="invalid-feedback">
+                {% for error in seller_form.phone.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ seller_form.phone(class="form-control", size=20,
+            value=current_user.phone) }} {% endif %}
+        </div>
+        <div class="submit">{{ seller_form.update }}</div>
+    </form>
+</div>
+<div class="account">
     <div class="form">
         <h3>Add Product</h3>
         <form method="POST" enctype="multipart/form-data">
             {{ product_form.hidden_tag() }}
             <div class="form-group">
-                {{ product_form.name.label(class="form-control-label") }} {% if
-                product_form.name.errors %} {{
-                product_form.name(class="form-control form-control-lg
-                is-invalid") }}
+                {{ product_form.name.label }} {% if product_form.name.errors %}
+                {{ product_form.name(class="form-control is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in product_form.name.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
-                {% else %} {{ product_form.name(class="form-control
-                form-control-lg") }} {% endif %}
+                {% else %} {{ product_form.name(class="form-control ") }} {%
+                endif %}
             </div>
             <div class="form-group">
                 {{ product_form.description.label }} {{
@@ -117,13 +115,18 @@
     {% for product in products %} {% if product.seller_id == current_user.id %}
     <div class="product-card">
         <a href="{{ url_for('product', product_id=product.id) }}">
-            <h4>{{ product.name }} - £{{ product.price }}</h4>
-            <img
-                src="{{ url_for('static', filename=product.image_url) }}"
-                alt="{{ product.name }}"
-                class="product-image-inner"
-            />
-            <p>Quantity: {{ product.quantity }}</p>
+            <div class="product-image-container">
+                <img
+                    src="{{ url_for('static', filename=product.image_url) }}"
+                    alt="{{ product.name }}"
+                    class="product-image-inner"
+                />
+            </div>
+            <div class="product-details">
+                <h4 class="product-title">{{ product.name }}</h4>
+                <p class="product-price">£{{ product.price }}</p>
+                <p class="product-description">{{ product.description }}</p>
+            </div>
         </a>
     </div>
     {% endif %} {% endfor %}

@@ -24,7 +24,7 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.String(20))
 
     seller_info = db.relationship("Seller", uselist=False, back_populates="user")
-    comments = db.relationship("Comment", back_populates="user")
+    reviews = db.relationship("Review", back_populates="user")
 
     def __repr__(self):
         return f"User({self.id}, {self.username}, {self.email})"
@@ -47,21 +47,32 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     image_url = db.Column(db.String(255), default="default_product.jpg")
     quantity = db.Column(db.Integer, nullable=False)
-    seller_id = db.Column(db.Integer, db.ForeignKey("seller.id"), nullable=False)
     rating = db.Column(db.Float)
 
+    seller_id = db.Column(db.Integer, db.ForeignKey("seller.id"), nullable=False)
     seller = db.relationship("Seller", back_populates="products")
-    comments = db.relationship("Comment", back_populates="product")
+    reviews = db.relationship("Review", back_populates="product")
 
     def __repr__(self):
         return f"Product({self.id}, {self.name}, {self.price})"
 
+    def has_user_reviewed(self, user):
+        return any(review.user == user for review in self.reviews)
 
-class Comment(db.Model):
+    def can_user_review(self, user):
+        return not self.seller or user != self.seller.user
+
+
+class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text, nullable=False)
+    text = db.Column(db.Text)
+    rating = db.Column(db.Integer)
+
     product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
-    product = db.relationship("Product", back_populates="comments")
-    user = db.relationship("User", back_populates="comments")
+    product = db.relationship("Product", back_populates="reviews")
+    user = db.relationship("User", back_populates="reviews")
+
+    def __repr__(self):
+        return f"Review({self.id}, Rating: {self.rating}, Product: {self.product.name}, User: {self.user.username})"
