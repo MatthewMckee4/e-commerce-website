@@ -1,0 +1,131 @@
+{% extends "layout.html" %} {% block content %}
+<div class="content-section">
+    <div class="account-container">
+        <div class="left-content">
+            <h1>Hi, {{ current_user.seller_info.name }}</h1>
+            {% if current_user.logo_url != 'default.jpg' %}
+            <img
+                src="{{ url_for('static', filename=current_user.logo_url) }}"
+                alt=""
+                class="logo-img"
+            />
+            {% endif %}
+        </div>
+        <div class="right-content">
+            <h4>
+                <a href="{{ url_for('account') }}">Account</a>
+            </h4>
+        </div>
+    </div>
+
+    <div class="form">
+        <h3>Seller Account Details</h3>
+        <form method="POST">
+            {{ seller_form.hidden_tag() }}
+            <div class="form-group">
+                {{ seller_form.seller_name.label(class="form-control-label") }}
+                {% if seller_form.seller_name.errors %} {{
+                seller_form.seller_name(class="form-control form-control-lg
+                is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in seller_form.seller_name.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ seller_form.seller_name(class="form-control
+                form-control-lg", size=20, value=current_user.seller_info.name)
+                }} {% endif %}
+            </div>
+            <div class="form-group">
+                {{ seller_form.phone.label }} {% if seller_form.phone.errors %}
+                {{ seller_form.phone(class="form-control is-invalid", size=20,
+                value=current_user.phone) }}
+                <div class="invalid-feedback">
+                    {% for error in seller_form.phone.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ seller_form.phone(class="form-control", size=20,
+                value=current_user.phone) }} {% endif %}
+            </div>
+            <div class="submit">{{ seller_form.update }}</div>
+        </form>
+    </div>
+</div>
+<div class="content-section">
+    <div class="form">
+        <h3>Add Product</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {{ product_form.hidden_tag() }}
+            <div class="form-group">
+                {{ product_form.name.label(class="form-control-label") }} {% if
+                product_form.name.errors %} {{
+                product_form.name(class="form-control form-control-lg
+                is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in product_form.name.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ product_form.name(class="form-control
+                form-control-lg") }} {% endif %}
+            </div>
+            <div class="form-group">
+                {{ product_form.description.label }} {{
+                product_form.description(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ product_form.price.label }} {% if product_form.price.errors
+                %} {{ product_form.price(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in product_form.price.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ product_form.price(class="form-control") }} {%
+                endif %}
+            </div>
+            <div class="form-group">
+                {{ product_form.image_url.label }} {% if
+                product_form.image_url.errors %} {{
+                product_form.image_url(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in product_form.image_url.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ product_form.image_url(class="form-control") }} {%
+                endif %}
+            </div>
+            <div class="form-group">
+                {{ product_form.quantity.label }} {% if
+                product_form.quantity.errors %} {{
+                product_form.quantity(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in product_form.quantity.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %} {{ product_form.quantity(class="form-control") }} {%
+                endif %}
+            </div>
+            <div class="submit">{{ product_form.submit }}</div>
+        </form>
+    </div>
+</div>
+<div class="product-grid">
+    {% for product in products %} {% if product.seller_id == current_user.id %}
+    <div class="product-card">
+        <a href="{{ url_for('product', product_id=product.id) }}">
+            <h4>{{ product.name }} - £{{ product.price }}</h4>
+            <img
+                src="{{ url_for('static', filename=product.image_url) }}"
+                alt="{{ product.name }}"
+                class="product-image-inner"
+            />
+            <p>Quantity: {{ product.quantity }}</p>
+        </a>
+    </div>
+    {% endif %} {% endfor %}
+</div>
+{% endblock content %}

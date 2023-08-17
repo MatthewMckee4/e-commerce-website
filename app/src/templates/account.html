@@ -1,20 +1,33 @@
 {% extends "layout.html" %} {% block content %}
 <div class="content-section">
     <div class="account-container">
-        <h1>Hi, {{ current_user.first_name }}</h1>
-        {% if current_user.logo_url != 'default.jpg' %}
-        <img
-            src="{{ url_for('static', filename=current_user.logo_url) }}"
-            alt=""
-            class="logo-img"
-        />
-        {% endif %}
+        <div class="left-content">
+            <h1>Hi, {{ current_user.username }}</h1>
+            {% if current_user.logo_url != 'default.jpg' %}
+            <img
+                src="{{ url_for('static', filename=current_user.logo_url) }}"
+                alt=""
+                class="logo-img"
+            />
+            {% endif %}
+        </div>
+        <div class="right-content">
+            {% if current_user.is_seller == False %}
+            <h4>
+                <a href="{{ url_for('become_seller') }}">Become a Seller</a>
+            </h4>
+            {% else %}
+            <h4>
+                <a href="{{ url_for('seller_account') }}">Seller Account</a>
+            </h4>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="account-details">
-        <h2>Account Details</h2>
+    <div class="form">
+        <h3>Account Details</h3>
         <form method="POST" enctype="multipart/form-data">
-            <div>{{ account_form.hidden_tag() }}</div>
+            {{ account_form.hidden_tag() }}
             <div>
                 {{ account_form.username.label }} {{
                 account_form.username(size=20, value=current_user.username) }}
@@ -44,13 +57,13 @@
                 account_form.date_of_birth(size=10, placeholder="YYYY-MM-DD",
                 value=current_user.date_of_birth) }}
             </div>
-            <div class="form-group">
+            <div class="file-upload">
                 {{ account_form.logo.label(class="form-control-label") }} {% if
                 account_form.logo.errors %} {{
                 account_form.logo(class="form-control form-control-lg
                 is-invalid") }}
                 <div class="invalid-feedback">
-                    {% for error in form.logo.errors %}
+                    {% for error in account_form.logo.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
@@ -59,7 +72,6 @@
             </div>
             <div class="submit">{{ account_form.submit }}</div>
         </form>
-
         <form method="POST">
             {{ delete_form.hidden_tag() }}
             <div>
@@ -74,19 +86,19 @@
             </div>
         </form>
     </div>
-
-    <script>
-        function showConfirmationDialog(event) {
-            event.preventDefault();
-
-            const dialog = document.getElementById("confirmation-dialog");
-            dialog.style.display = "block";
-
-            const cancelButton = document.getElementById("cancel-delete");
-            cancelButton.addEventListener("click", function () {
-                dialog.style.display = "none";
-            });
-        }
-    </script>
 </div>
+
+<script>
+    function showConfirmationDialog(event) {
+        event.preventDefault();
+
+        const dialog = document.getElementById("confirmation-dialog");
+        dialog.style.display = "block";
+
+        const cancelButton = document.getElementById("cancel-delete");
+        cancelButton.addEventListener("click", function () {
+            dialog.style.display = "none";
+        });
+    }
+</script>
 {% endblock content %}
