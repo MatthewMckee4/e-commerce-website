@@ -205,3 +205,7 @@ class DeleteReviewForm(FlaskForm):
 class DeleteProductForm(FlaskForm):
     product_id = StringField("Product ID")
     submit = SubmitField("Delete")
+
+
+class AddToBasketForm(FlaskForm):
+    submit = SubmitField("Add to Basket")

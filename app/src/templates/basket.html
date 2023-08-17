@@ -1,0 +1,26 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Basket</h1>
+
+<div class="product-grid">
+    {% if user_basket %} {% for item in basket_items %}
+    <div class="product-card">
+        <a href="{{ url_for('product', product_id=item.product.id) }}">
+            <div class="product-image-container">
+                <img
+                    src="{{ url_for('static', filename=item.product.image_url) }}"
+                    alt="{{ item.product.name }}"
+                    class="product-image-inner"
+                />
+            </div>
+            <div class="product-details">
+                <h4 class="product-title">{{ item.product.name }}</h4>
+                <p class="product-price">Quantity: {{ item.quantity }}</p>
+                <!-- Add more product details if needed -->
+            </div>
+        </a>
+    </div>
+    {% endfor %} {% else %}
+    <p>Your basket is empty.</p>
+    {% endif %}
+</div>
+{% endblock content %}

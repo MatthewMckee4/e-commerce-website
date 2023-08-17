@@ -10,8 +10,9 @@ from src.forms import (
     ReviewForm,
     DeleteReviewForm,
     DeleteProductForm,
+    AddToBasketForm,
 )
-from src.models import User, Product, Seller, Review
+from src.models import User, Product, Seller, Review, Basket, BasketItem
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 import os
@@ -27,6 +28,26 @@ def home():
 @app.route("/about")
 def about():
     return render_template("about.html", title="About")
+
+
+@app.route("/basket")
+def basket():
+    if current_user.is_authenticated:
+        user_basket = Basket.query.filter_by(user_id=current_user.id).first()
+
+        if user_basket:
+            # Assuming you want to display basket items, retrieve them here
+            basket_items = BasketItem.query.filter_by(basket_id=user_basket.id).all()
+
+            return render_template(
+                "basket.html",
+                title="Basket",
+                user_basket=user_basket,
+                basket_items=basket_items,
+            )
+
+    # If the user is not authenticated or doesn't have a basket, you can handle that case here
+    return render_template("basket.html", title="Basket")
 
 
 @app.route("/store", methods=["GET"])
@@ -230,6 +251,7 @@ def product(product_id):
     product = Product.query.filter_by(id=product_id).first()
     review_form = ReviewForm()
     delete_review_form = DeleteReviewForm()
+    add_to_basket_form = AddToBasketForm()
     form = request.form.get("form")
     if request.method == "POST":
         if form == "post" and review_form.validate_on_submit():
@@ -285,6 +307,28 @@ def product(product_id):
                 flash("Review deleted successfully.", "success")
             else:
                 flash("You are not authorized to delete this review.", "error")
+        elif form == "basket" and add_to_basket_form.validate_on_submit():
+            product = Product.query.get_or_404(product_id)
+            user_basket = current_user.basket
+
+            if user_basket is None:
+                user_basket = Basket(user=current_user)
+                db.session.add(user_basket)
+
+            basket_item = BasketItem.query.filter_by(
+                basket=user_basket, product=product
+            ).first()
+            if basket_item:
+                basket_item.quantity += 1
+            else:
+                basket_item = BasketItem(
+                    basket=user_basket, basket_id=user_basket, product=product
+                )
+                db.session.add(basket_item)
+
+            db.session.commit()
+            flash(f"{product.name} added to your basket!", "success")
+            return redirect(url_for("basket"))
 
     reviews = Review.query.filter_by(product_id=product.id).all()
     user_review = None
@@ -307,6 +351,7 @@ def product(product_id):
         product=product,
         review_form=review_form,
         delete_review_form=delete_review_form,
+        add_to_basket_form=add_to_basket_form,
         user_review=user_review,
         average_rating=average_rating,
         seller=product.seller_id == current_user.seller_info.id,

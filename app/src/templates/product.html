@@ -14,6 +14,16 @@
     <div class="product-actions">
         <button class="btn-buy">Buy Now</button>
     </div>
+    <div class="product-actions">
+        <form
+            method="post"
+            action="{{ url_for('product', product_id=product.id) }}"
+        >
+            <input type="hidden" name="form" value="basket" />
+            {{ add_to_basket_form.hidden_tag() }}
+            <div class="form-group">{{ add_to_basket_form.submit }}</div>
+        </form>
+    </div>
 </div>
 {% if not seller %}
 <div class="account login-register-form">
