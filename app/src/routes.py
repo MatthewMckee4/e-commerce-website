@@ -14,6 +14,7 @@ from src.models import User, Product, Seller, Review
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 import os
+from sqlalchemy import func
 
 
 @app.route("/")
@@ -277,14 +278,22 @@ def product(product_id):
             user_review = review
             break
 
+    average_rating = (
+        db.session.query(func.avg(Review.rating))
+        .filter_by(product_id=product_id)
+        .scalar()
+    )
+
+    average_rating = round(average_rating, 1) if average_rating is not None else None
+
     return render_template(
         "product.html",
         title=product.name,
         product=product,
         review_form=review_form,
         delete_review_form=delete_review_form,
-        reviews=reviews,
         user_review=user_review,
+        average_rating=average_rating,
     )
 
 
