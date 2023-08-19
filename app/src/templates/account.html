@@ -1,29 +1,33 @@
 {% extends "layout.html" %} {% block content %}
-<div class="account-info">
-    <div class="user-details">
-        <div class="user-message">
-            <h1>Hi, {{ current_user.username }}</h1>
+<div class="account form-div">
+    <div class="account-info">
+        <div class="user-details">
+            <div class="user-message">
+                <h1>Hi, {{ current_user.username }}</h1>
+            </div>
+            <div class="user-logo">
+                {% if current_user.logo_url != 'default.jpg' %}
+                <img
+                    src="{{ url_for('static', filename=current_user.logo_url) }}"
+                    alt=""
+                    class="logo-img"
+                />
+                {% endif %}
+            </div>
         </div>
-        <div class="user-logo">
-            {% if current_user.logo_url != 'default.jpg' %}
-            <img
-                src="{{ url_for('static', filename=current_user.logo_url) }}"
-                alt=""
-                class="logo-img"
-            />
+        <div class="seller-link">
+            {% if current_user.is_seller == False %}
+            <h4>
+                <a href="{{ url_for('become_seller') }}">Become a Seller</a>
+            </h4>
+            {% else %}
+            <h4>
+                <a href="{{ url_for('seller_account') }}">Seller Account</a>
+            </h4>
             {% endif %}
         </div>
     </div>
-    <div class="seller-link">
-        {% if current_user.is_seller == False %}
-        <h4><a href="{{ url_for('become_seller') }}">Become a Seller</a></h4>
-        {% else %}
-        <h4><a href="{{ url_for('seller_account') }}">Seller Account</a></h4>
-        {% endif %}
-    </div>
-</div>
 
-<div class="account">
     <h3>Account Details</h3>
     <form method="POST" enctype="multipart/form-data">
         {{ account_form.hidden_tag() }}

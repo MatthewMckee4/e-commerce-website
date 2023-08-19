@@ -86,7 +86,7 @@
         {% if review.user == current_user %}
         <form
             method="POST"
-            action="{{ url_for('product', product_id=product.id, form='delete') }}"
+            action="{{ url_for('product', product_id=product.id) }}"
         >
             <input type="hidden" name="form" value="delete" />
             {{ delete_review_form.hidden_tag() }}

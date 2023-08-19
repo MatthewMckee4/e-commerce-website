@@ -1,6 +1,6 @@
 {% extends "layout.html" %} {% block content %}
 <h1>Basket</h1>
-
+<h3>Total: £{{ basket_total }}</h3>
 <div class="product-grid">
     {% if user_basket %} {% for item in basket_items %}
     <div class="product-card">

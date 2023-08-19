@@ -1,6 +1,7 @@
 body {
-    font-family: verdana;
+    font-family: lato, sans-serif;
     margin: 0;
+    background-color: darkgrey;
 }
 main {
     margin: 10px;
@@ -18,13 +19,17 @@ nav {
     display: flex;
     justify-content: space-between;
 }
-
+nav > div {
+    padding: 10px;
+}
 nav a {
     color: white;
-    padding: 12px 20px;
+    padding: 22px 30px;
+    margin: 0 10px;
+    border-radius: 17px;
 }
 
-nav a:hover {
+nav a:not([href="/"]):hover {
     background-color: #2c4427;
 }
 
@@ -39,7 +44,6 @@ nav .logo {
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    margin-top: 2px;
     margin-right: 10px;
 }
 
@@ -73,48 +77,72 @@ nav .logo {
 }
 
 /* All forms */
+.form-div {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin: auto;
+}
+
+.form-div input {
+    font-family: lato, sans-serif;
+    padding: 14px;
+    background-color: white;
+}
+.form-div form div.text {
+    margin: 10px 0 10px 0;
+}
+
+.form-div form div input {
+    margin: 10px 0 10px 0;
+    border-radius: 20px;
+}
+
+.form-div form div.text label {
+    margin-left: 20px;
+}
+
+.form-div > div {
+    margin-top: 20px;
+}
+
+.form-div h3 {
+    text-align: center;
+}
+
+.form-group label,
+.form-group a,
+.redirect-form-link {
+    font-size: 15px;
+}
+
 form input[type="submit"] {
     background-color: green;
     color: white;
-    padding: 10px 20px;
+    padding: 14px 30px;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 20px;
 }
 
 form input[type="submit"]:hover {
     background-color: darkgreen;
 }
 
-form div {
-    margin-bottom: 15px;
-}
-
-.form-group label,
-.form-group a,
-.redirect-form-link {
-    font-size: 12px;
-}
-
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group input[type="date"],
 .form-group textarea {
-    padding: 10px; /* Add padding for spacing */
+    /* Add padding for spacing */
     font-size: 12px; /* Adjust font size */
     border: 1px solid #ccc; /* Add a border for visual separation */
-    border-radius: 5px; /* Add rounded corners */
     box-sizing: border-box; /* Include padding and border in the width */
-    font-family: verdana;
 }
 
 /* Login / Register */
 .login-register-form {
-    max-width: 460px;
-    margin: auto;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
+    margin-top: 150px;
+    max-width: 400px;
 }
 
 .login-register-form a {
@@ -138,15 +166,16 @@ form div {
     display: block;
 }
 
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
 /* Account */
 
 .account {
     max-width: 800px;
-    margin: auto;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
 }
 
 .account-info {
@@ -295,7 +324,6 @@ form .delete-button input[type="submit"] {
     cursor: pointer;
     font-weight: bold;
 }
-
 
 .review-list {
     margin-top: 20px;

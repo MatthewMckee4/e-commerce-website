@@ -39,11 +39,19 @@ def basket():
             # Assuming you want to display basket items, retrieve them here
             basket_items = BasketItem.query.filter_by(basket_id=user_basket.id).all()
 
+            # Calculate the total value of items in the basket
+            basket_total = round(
+                sum(item.product.price * item.quantity for item in basket_items), 2
+            )
+
+            basket_total = "{:.2f}".format(basket_total)
+
             return render_template(
                 "basket.html",
                 title="Basket",
                 user_basket=user_basket,
                 basket_items=basket_items,
+                basket_total=basket_total,  # Pass the total to the template
             )
 
     # If the user is not authenticated or doesn't have a basket, you can handle that case here
@@ -296,7 +304,6 @@ def product(product_id):
             else:
                 flash("You have not reviewed this product yet.", "error")
         elif form == "delete" and delete_review_form.validate_on_submit():
-            print("deleting review")
             review_to_delete = Review.query.get_or_404(
                 delete_review_form.review_id.data
             )
@@ -356,6 +363,12 @@ def product(product_id):
         average_rating=average_rating,
         seller=product.seller_id == current_user.seller_info.id,
     )
+
+
+# @app.route("/add_to_basket/<int:product_id>", methods=["POST"])
+# def add_to_basket(product_id):
+#     print("basket")
+#     return redirect(url_for("product", product_id=product_id))
 
 
 def save_uploaded_file(file_storage, directory):
