@@ -21,7 +21,7 @@
     </div>
 </div>
 
-<div class="account">
+<div class="account form-main">
     <h3>Seller Account Details</h3>
     <form method="POST">
         <input type="hidden" name="form" value="seller" />
@@ -53,7 +53,7 @@
         <div class="submit">{{ seller_form.update }}</div>
     </form>
 </div>
-<div class="account">
+<div class="account form-main">
     <div class="form">
         <h3>Add Product</h3>
         <form method="POST" enctype="multipart/form-data">
@@ -144,4 +144,17 @@
     </div>
     {% endif %} {% endfor %}
 </div>
+<script>
+    const fileInput = document.getElementById("fileInput");
+    const uploadBtnText = document.getElementById("uploadBtnText");
+
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            uploadBtnText.textContent = file.name;
+        } else {
+            uploadBtnText.textContent = "Choose a file";
+        }
+    });
+</script>
 {% endblock content %}

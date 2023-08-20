@@ -85,3 +85,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+function showConfirmationDialog(event) {
+    event.preventDefault();
+
+    const dialog = document.getElementById("confirmation-dialog");
+    dialog.style.display = "block";
+
+    const cancelButton = document.getElementById("cancel-delete");
+    cancelButton.addEventListener("click", function () {
+        dialog.style.display = "none";
+    });
+}

@@ -49,14 +49,14 @@ nav .logo {
 
 /* Flash Messages */
 .flash-messages {
-    max-width: 840px;
+    max-width: 860px;
     margin: auto;
 }
 
 .alert {
-    padding: 10px;
+    padding: 20px;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 30px;
 }
 
 .alert-success {
@@ -77,36 +77,36 @@ nav .logo {
 }
 
 /* All forms */
-.form-div {
+.form-main {
     background-color: white;
     border-radius: 20px;
     padding: 30px;
     margin: auto;
+    margin-bottom: 2rem;
 }
 
-.form-div input {
+.form-main input {
     font-family: lato, sans-serif;
-    padding: 14px;
     background-color: white;
 }
-.form-div form div.text {
-    margin: 10px 0 10px 0;
-}
 
-.form-div form div input {
-    margin: 10px 0 10px 0;
+.form-main form div > *:not(label) {
+    padding: 14px;
     border-radius: 20px;
 }
-
-.form-div form div.text label {
-    margin-left: 20px;
+.form-main form div input {
+    margin: 10px 0 10px 0;
 }
 
-.form-div > div {
+.form-main form div.text label {
+    margin-left: 15px;
+}
+
+.form-main > div {
     margin-top: 20px;
 }
 
-.form-div h3 {
+.form-main h3 {
     text-align: center;
 }
 
@@ -116,24 +116,33 @@ nav .logo {
     font-size: 15px;
 }
 
-form input[type="submit"] {
-    background-color: green;
+.form-main input[type="submit"] {
     color: white;
     padding: 14px 30px;
     border: none;
     cursor: pointer;
     border-radius: 20px;
 }
-
-form input[type="submit"]:hover {
+.form-main .form-group input[type="submit"] {
+    background-color: green;
+}
+.form-main input[type="submit"]:hover {
     background-color: darkgreen;
+}
+.form-main .delete-button input[type="submit"] {
+    background-color: red;
+}
+
+.form-main .image-upload input[type="file"] {
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group input[type="date"],
 .form-group textarea {
-    /* Add padding for spacing */
     font-size: 12px; /* Adjust font size */
     border: 1px solid #ccc; /* Add a border for visual separation */
     box-sizing: border-box; /* Include padding and border in the width */
@@ -203,31 +212,15 @@ form input[type="submit"]:hover {
 .user-message h1 {
     margin: 0;
 }
-/* File Input  */
-.file-upload {
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.file-form-control {
-    padding: 10px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
 
 /* Delete Button */
-form .delete-button input[type="submit"] {
-    background-color: red;
-}
 
 #cancel-delete {
     background-color: gray;
     color: white;
-    padding: 10px 20px;
     border: 1px solid #ccc;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 20px;
 }
 
 .hidden-field {
@@ -273,7 +266,6 @@ form .delete-button input[type="submit"] {
 
 .product-details {
     padding: 10px;
-    flex: 1;
 }
 
 .product-title {
@@ -299,10 +291,11 @@ form .delete-button input[type="submit"] {
     display: flex;
     justify-content: space-between;
     margin: auto;
-    padding: 20px;
+    padding: 30px;
     border: 1px solid #ccc;
     background-color: #fff;
     margin-bottom: 10px;
+    border-radius: 20px;
 }
 
 .product-image img {
@@ -315,14 +308,13 @@ form .delete-button input[type="submit"] {
     padding: 10px;
 }
 
-.btn-buy {
-    background-color: #f0c14b;
-    color: #111;
-    padding: 10px 20px;
+.product-info input {
+    background-color: green;
+    color: white;
+    padding: 14px 20px;
     border: none;
-    border-radius: 3px;
     cursor: pointer;
-    font-weight: bold;
+    border-radius: 20px;
 }
 
 .review-list {
@@ -335,23 +327,22 @@ form .delete-button input[type="submit"] {
     margin: 10px 0;
     background-color: #f9f9f9;
     display: flex;
-    flex-direction: column; /* Display username and text in a column layout */
+    justify-content: space-between;
+    border-radius: 30px;
 }
 
-.review-user {
-    font-weight: bold;
-    margin-bottom: 5px; /* Add some spacing between username and comment text */
+.review-box h3 {
+    margin-top: 10px;
+}
+.delete-review input {
+    text-align: right;
+    background-color: red;
+    color: black;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 20px;
 }
 
-.review-text {
-    margin: 0;
-}
-
-.delete-button {
-    text-align: left;
-    margin-left: 10px;
-}
-
-.rating {
-    width: 10%;
+.delete-review input:hover {
+    background-color: rgb(188, 18, 18);
 }

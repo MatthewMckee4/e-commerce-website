@@ -7,26 +7,24 @@
         />
     </div>
     <div class="product-info">
-        <h2>{{ product.name }} - £{{ product.price }}</h2>
+        <h2>{{ product.name }}</h2>
+        <h3>£{{ product.price }}</h3>
         <p>Quantity: {{ product.quantity }}</p>
         <p>Average Rating: {{ average_rating }}</p>
-    </div>
-    <div class="product-actions">
-        <button class="btn-buy">Buy Now</button>
-    </div>
-    <div class="product-actions">
-        <form
-            method="post"
-            action="{{ url_for('product', product_id=product.id) }}"
-        >
-            <input type="hidden" name="form" value="basket" />
-            {{ add_to_basket_form.hidden_tag() }}
-            <div class="form-group">{{ add_to_basket_form.submit }}</div>
-        </form>
+        <div>
+            <form
+                method="post"
+                action="{{ url_for('product', product_id=product.id) }}"
+            >
+                <input type="hidden" name="form" value="basket" />
+                {{ add_to_basket_form.hidden_tag() }}
+                <div class="form-group">{{ add_to_basket_form.submit }}</div>
+            </form>
+        </div>
     </div>
 </div>
 {% if not seller %}
-<div class="account login-register-form">
+<div class="account form-main">
     <h3>{{ current_user.username }}</h3>
     <form
         method="POST"
@@ -78,24 +76,28 @@
     <h3>Reviews</h3>
     {% for review in product.reviews %}
     <div class="review-box">
-        <div class="review-user">
-            {{ review.user.username }} {% if review.rating %} - {{ review.rating
-            }}/100{% endif %}
+        <div class="review">
+            <h3>
+                {{ review.user.username }} {% if review.rating %} - {{
+                review.rating }}/100{% endif %}
+            </h3>
+            <p class="review-text">{{ review.text }}</p>
         </div>
-        <div class="review-text">{{ review.text }}</div>
         {% if review.user == current_user %}
-        <form
-            method="POST"
-            action="{{ url_for('product', product_id=product.id) }}"
-        >
-            <input type="hidden" name="form" value="delete" />
-            {{ delete_review_form.hidden_tag() }}
-            <div>
-                {{ delete_review_form.review_id(value=review.id,
-                class='hidden-field') }}
-            </div>
-            <div class="delete-button">{{ delete_review_form.submit }}</div>
-        </form>
+        <div class="delete-review">
+            <form
+                method="POST"
+                action="{{ url_for('product', product_id=product.id) }}"
+            >
+                <input type="hidden" name="form" value="delete" />
+                {{ delete_review_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ delete_review_form.review_id(value=review.id,
+                    class='hidden-field') }}
+                </div>
+                <div>{{ delete_review_form.submit }}</div>
+            </form>
+        </div>
         {% endif %}
     </div>
     {% endfor %}
