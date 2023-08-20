@@ -13,5 +13,8 @@
     },
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
+    },
+    "python.testing.unittestArgs": ["-v", "-s", "./app", "-p", "test_*.py"],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }
