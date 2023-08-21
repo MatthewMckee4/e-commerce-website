@@ -87,6 +87,9 @@ class Basket(db.Model):
 
     items = db.relationship("BasketItem", back_populates="basket")
 
+    def __repr__(self):
+        return f"Basket({self.id}, User: {self.user.name}, {len(self.items)} Items)"
+
 
 class BasketItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -96,3 +99,6 @@ class BasketItem(db.Model):
 
     product = db.relationship("Product", back_populates="in_baskets")
     basket = db.relationship("Basket", back_populates="items")
+
+    def __repr__(self):
+        return f"BasketItem(id: {self.id}, {self.product.name}, product_id: {self.product_id}, Qty: {self.quantity})"

@@ -2,25 +2,34 @@
 <h1>Basket</h1>
 <h3>Total: £{{ basket_total }}</h3>
 <div class="product-grid">
-    {% if user_basket %} {% for item in basket_items %}
+    {% for item in basket_items %}
     <div class="product-card">
-        <a href="{{ url_for('product', product_id=item.product.id) }}">
-            <div class="product-image-container">
+        <div class="product-image-container">
+            <a href="{{ url_for('product', product_id=item.product.id) }}">
                 <img
                     src="{{ url_for('static', filename=item.product.image_url) }}"
                     alt="{{ item.product.name }}"
                     class="product-image-inner"
                 />
-            </div>
-            <div class="product-details">
-                <h4 class="product-title">{{ item.product.name }}</h4>
-                <p class="product-price">Quantity: {{ item.quantity }}</p>
-                <!-- Add more product details if needed -->
-            </div>
-        </a>
+            </a>
+        </div>
+        <div class="product-details">
+            <h4 class="product-title">{{ item.product.name }}</h4>
+            <form method="post">
+                {{ form_dict[item.id].hidden_tag() }}
+                <div>
+                    {{ form_dict[item.id].product_id(value=item.id,
+                    class='hidden-field') }}
+                </div>
+                <div class="form-group">
+                    {{ form_dict[item.id].quantity.label }} {{
+                    form_dict[item.id].quantity(data=item.quantity,
+                    onchange="this.form.submit()") }}
+                </div>
+            </form>
+            <!-- Add more product details if needed -->
+        </div>
     </div>
-    {% endfor %} {% else %}
-    <p>Your basket is empty.</p>
-    {% endif %}
+    {% endfor %}
 </div>
 {% endblock content %}

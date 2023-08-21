@@ -109,26 +109,26 @@
                 {% else %} {{ product_form.quantity(class="form-control") }} {%
                 endif %}
             </div>
-            <div class="submit">{{ product_form.submit }}</div>
+            <div class="form-group">{{ product_form.submit }}</div>
         </form>
     </div>
 </div>
 <div class="product-grid">
     {% for product in products %} {% if product.seller_id == current_user.id %}
     <div class="product-card">
-        <a href="{{ url_for('product', product_id=product.id) }}">
-            <div class="product-image-container">
+        <div class="product-image-container">
+            <a href="{{ url_for('product', product_id=product.id) }}">
                 <img
                     src="{{ url_for('static', filename=product.image_url) }}"
                     alt="{{ product.name }}"
                     class="product-image-inner"
                 />
-            </div>
-            <div class="product-details">
-                <h4 class="product-title">{{ product.name }}</h4>
-                <p class="product-price">£{{ product.price }}</p>
-                <p class="product-description">{{ product.description }}</p>
-            </div>
+            </a>
+        </div>
+        <div class="product-details">
+            <h4 class="product-title">{{ product.name }}</h4>
+            <p class="product-price">£{{ product.price }}</p>
+            <p class="product-description">{{ product.description }}</p>
             <form method="POST" class="delete-product-form">
                 <input type="hidden" name="form" value="delete" />
                 {{ delete_product_form.hidden_tag() }}
@@ -140,7 +140,7 @@
                     {{ delete_product_form.submit }}
                 </div>
             </form>
-        </a>
+        </div>
     </div>
     {% endif %} {% endfor %}
 </div>

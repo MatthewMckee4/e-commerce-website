@@ -85,16 +85,18 @@ nav .logo {
     margin-bottom: 2rem;
 }
 
-.form-main input {
+.form-group input,
+.form-group textarea {
     font-family: lato, sans-serif;
     background-color: white;
 }
 
-.form-main form div > *:not(label) {
+.form-main form div > *:not(label):not(span) {
     padding: 14px;
     border-radius: 20px;
 }
-.form-main form div input {
+
+.form-group > * {
     margin: 10px 0 10px 0;
 }
 
@@ -143,7 +145,7 @@ nav .logo {
 .form-group input[type="password"],
 .form-group input[type="date"],
 .form-group textarea {
-    font-size: 12px; /* Adjust font size */
+    font-size: 13px; /* Adjust font size */
     border: 1px solid #ccc; /* Add a border for visual separation */
     box-sizing: border-box; /* Include padding and border in the width */
 }
@@ -169,7 +171,6 @@ nav .logo {
 .invalid-feedback {
     color: #dc3545;
     font-size: 14px;
-    margin-top: 5px;
 }
 .invalid-feedback span {
     display: block;
@@ -229,21 +230,29 @@ nav .logo {
 
 /* Product Grid */
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
 .product-card {
-    border: 1px solid #ccc;
     background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 300px;
+    grid-template-rows: 300px 100px;
     height: 100%;
     transition: transform 0.3s ease;
 }
 
+.product-image-container {
+    grid: 1 / 2 / 1 / 2;
+    align-self: center;
+}
+
+.product-details {
+    grid: 1 / 2 / 2 / 3;
+    padding: 10px;
+}
 .product-card:hover {
     transform: translateY(-3px); /* Move up by 5px on hover */
 }
@@ -252,20 +261,8 @@ nav .logo {
     color: #333;
 }
 
-.product-image-container {
-    text-align: center;
+.product-image-container img {
     width: 100%;
-    overflow: hidden;
-}
-
-.product-image-inner {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.product-details {
-    padding: 10px;
 }
 
 .product-title {
@@ -299,7 +296,7 @@ nav .logo {
 }
 
 .product-image img {
-    max-width: 100%;
+    width: 300px;
     height: auto;
 }
 
@@ -308,7 +305,7 @@ nav .logo {
     padding: 10px;
 }
 
-.product-info input {
+.product-info input[type="submit"] {
     background-color: green;
     color: white;
     padding: 14px 20px;
@@ -318,12 +315,17 @@ nav .logo {
 }
 
 .review-list {
+    margin: auto;
+    background-color: white;
+    max-width: 800px;
     margin-top: 20px;
+    padding: 30px;
+    border-radius: 30px;
 }
 
 .review-box {
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 20px;
     margin: 10px 0;
     background-color: #f9f9f9;
     display: flex;
@@ -336,7 +338,7 @@ nav .logo {
 }
 .delete-review input {
     text-align: right;
-    background-color: red;
+    background-color: rgb(215, 48, 48);
     color: black;
     cursor: pointer;
     padding: 10px;

@@ -12,12 +12,21 @@
         <p>Quantity: {{ product.quantity }}</p>
         <p>Average Rating: {{ average_rating }}</p>
         <div>
-            <form
-                method="post"
-                action="{{ url_for('product', product_id=product.id) }}"
-            >
+            <form method="post">
                 <input type="hidden" name="form" value="basket" />
                 {{ add_to_basket_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ add_to_basket_form.quantity.label }} {% if
+                    add_to_basket_form.quantity.errors %} {{
+                    add_to_basket_form.quantity(class="is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in add_to_basket_form.quantity.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %} {{ add_to_basket_form.quantity }} {% endif %}
+                </div>
+
                 <div class="form-group">{{ add_to_basket_form.submit }}</div>
             </form>
         </div>
@@ -26,10 +35,7 @@
 {% if not seller %}
 <div class="account form-main">
     <h3>{{ current_user.username }}</h3>
-    <form
-        method="POST"
-        action="{{ url_for('product', product_id=product.id) }}"
-    >
+    <form method="POST">
         {% if not user_review %}
         <input type="hidden" name="form" value="post" />
         {% else %}
@@ -85,10 +91,7 @@
         </div>
         {% if review.user == current_user %}
         <div class="delete-review">
-            <form
-                method="POST"
-                action="{{ url_for('product', product_id=product.id) }}"
-            >
+            <form method="POST">
                 <input type="hidden" name="form" value="delete" />
                 {{ delete_review_form.hidden_tag() }}
                 <div class="form-group">

@@ -59,19 +59,38 @@
                     {% with messages =
                     get_flashed_messages(with_categories=true) %} {% if messages
                     %} {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}" id="alert-message">
+                    <div
+                        class="alert alert-{{ category }} hide-message"
+                        data-message-id="{{ loop.index }}"
+                    >
                         {{ message }}
                     </div>
                     {% endfor %} {% endif %} {% endwith %}
                 </div>
                 <script>
-                    setTimeout(function () {
-                        var alertMessage =
-                            document.getElementById("alert-message");
-                        if (alertMessage) {
-                            alertMessage.style.display = "none";
-                        }
-                    }, 3000);
+                    document.addEventListener("DOMContentLoaded", function () {
+                        // Get all elements with the "hide-message" class
+                        const hideMessageElements =
+                            document.querySelectorAll(".hide-message");
+
+                        // Loop through each element and schedule its removal
+                        hideMessageElements.forEach(function (element) {
+                            const messageID =
+                                element.getAttribute("data-message-id");
+                            const removalTime = 2000; // Time in milliseconds (5 seconds)
+
+                            setTimeout(function () {
+                                // Fade out the element before removing it
+                                element.style.transition = "opacity 0.5s";
+                                element.style.opacity = "0";
+
+                                // Remove the element from the DOM after fading out
+                                setTimeout(function () {
+                                    element.remove();
+                                }, 500); // Wait for the fade out transition to complete
+                            }, removalTime);
+                        });
+                    });
                 </script>
                 {% block content %}{% endblock %}
             </div>

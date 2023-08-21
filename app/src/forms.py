@@ -8,14 +8,13 @@ from wtforms import (
     DateField,
     FloatField,
     IntegerField,
-    HiddenField,
+    SelectField,
 )
 import re
 from wtforms.validators import (
     DataRequired,
     Length,
     Email,
-    EqualTo,
     ValidationError,
     Optional,
     NumberRange,
@@ -184,4 +183,11 @@ class DeleteProductForm(FlaskForm):
 
 
 class AddToBasketForm(FlaskForm):
+    product_id = StringField("Product ID")
+    quantity = SelectField(
+        "Quantity:", choices=[(str(i), str(i)) for i in range(0, 31)], default="1"
+    )
     submit = SubmitField("Add to Basket")
+
+    def __repr__(self):
+        return f"AddToBasketForm(product_id={self.product_id.data}, quantity={self.quantity.data})"

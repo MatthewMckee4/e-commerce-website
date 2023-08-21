@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, jsonify
 from src import app, db, bcrypt
 from src.forms import (
     RegistrationForm,
@@ -19,6 +19,14 @@ import os
 from sqlalchemy import func
 
 
+def get_basket_items(user_basket):
+    return BasketItem.query.filter_by(basket_id=user_basket.id).all()
+
+
+def calculate_basket_total(basket_items):
+    return round(sum(item.product.price * item.quantity for item in basket_items), 2)
+
+
 @app.route("/")
 @app.route("/home")
 def home():
@@ -30,31 +38,54 @@ def about():
     return render_template("about.html", title="About")
 
 
-@app.route("/basket")
+@app.route("/basket", methods=["GET", "POST"])
 def basket():
     if current_user.is_authenticated:
         user_basket = Basket.query.filter_by(user_id=current_user.id).first()
 
         if user_basket:
-            # Assuming you want to display basket items, retrieve them here
-            basket_items = BasketItem.query.filter_by(basket_id=user_basket.id).all()
+            basket_items = get_basket_items(user_basket)
+            form_dict = {}  # To store forms for each item
 
-            # Calculate the total value of items in the basket
-            basket_total = round(
-                sum(item.product.price * item.quantity for item in basket_items), 2
-            )
+            for item in basket_items:
+                form = AddToBasketForm()
+                form_dict[item.id] = form
 
-            basket_total = "{:.2f}".format(basket_total)
+            if request.method == "POST":
+                item_id = int(request.form.get("product_id"))
+
+                basket_item = BasketItem.query.filter_by(id=item_id).first()
+                new_quantity = form_dict[item_id].quantity.data
+                if int(new_quantity) == 0:
+                    print(basket_item)
+                    db.session.delete(basket_item)
+                else:
+                    basket_item.quantity = int(new_quantity)
+                db.session.commit()
+
+            for item in basket_items:
+                form_dict[item.id].quantity.data = str(item.quantity)
+
+            # Refresh basket items and total after potential updates
+            basket_items = get_basket_items(user_basket)
+            basket_total = calculate_basket_total(basket_items)
 
             return render_template(
                 "basket.html",
                 title="Basket",
                 user_basket=user_basket,
                 basket_items=basket_items,
-                basket_total=basket_total,  # Pass the total to the template
+                basket_total=basket_total,
+                form_dict=form_dict,
             )
 
-    # If the user is not authenticated or doesn't have a basket, you can handle that case here
+        else:
+            return render_template("basket.html", title="Basket")
+
+    else:
+        flash("Please log in to view your basket.", "info")
+        return redirect(url_for("login"))  # Redirect to login page
+
     return render_template("basket.html", title="Basket")
 
 
@@ -80,6 +111,7 @@ def store():
 def seller_account():
     seller_form = SellerForm(current_user=current_user)
     product_form = ProductForm()
+    delete_product_form = DeleteProductForm()
     form = request.form.get("form")
 
     if request.method == "POST":
@@ -259,39 +291,63 @@ def product(product_id):
     review_form = ReviewForm()
     delete_review_form = DeleteReviewForm()
     add_to_basket_form = AddToBasketForm()
-    form = request.form.get("form")
-    if request.method == "POST":
-        if form == "post" and review_form.validate_on_submit():
+
+    def add_review():
+        try:
+            if not current_user.is_authenticated:
+                flash("You need to be logged in to post a review.", "error")
+                return redirect(url_for("login"))  # Redirect to login page
+
+            if not review_form.validate_on_submit():
+                flash("Invalid review submission.", "error")
+                return redirect(request.referrer or url_for("index"))  # Redirect back
+
             existing_review = Review.query.filter_by(
                 product_id=product.id, user_id=current_user.id
             ).first()
 
             if existing_review:
                 flash("You have already reviewed this product.", "error")
-            else:
-                review = Review(
-                    text=review_form.text.data,
-                    rating=review_form.rating.data,
-                    product=product,
-                    user=current_user,
+                return redirect(
+                    request.referrer or url_for("product_detail", product_id=product.id)
                 )
-                db.session.add(review)
-                db.session.commit()
-                flash("Review posted successfully!", "success")
-        elif form == "update" and review_form.validate_on_submit():
+
+            review = Review(
+                text=review_form.text.data,
+                rating=review_form.rating.data,
+                product=product,
+                user=current_user,
+            )
+            db.session.add(review)
+            db.session.commit()
+            flash("Review posted successfully!", "success")
+            return redirect(url_for("product", product_id=product.id))
+
+        except Exception as e:
+            flash("An error occurred while posting your review.", "error")
+            # Log the error for debugging purposes
+            print(e)
+            return redirect(request.referrer or url_for("index"))  # Redirect back
+
+    def update_review():
+        try:
+            if not current_user.is_authenticated:
+                flash("You need to be logged in to update a review.", "error")
+                return redirect(url_for("login"))  # Redirect to login page
+
+            if not review_form.validate_on_submit():
+                flash("Invalid review update.", "error")
+                return redirect(request.referrer or url_for("index"))  # Redirect back
+
             existing_review = Review.query.filter_by(
                 product_id=product.id, user_id=current_user.id
             ).first()
 
             if existing_review:
-                if review_form.text.data or (
-                    not review_form.text.data and existing_review.text
-                ):
+                if review_form.text.data or existing_review.text:
                     existing_review.text = review_form.text.data
 
-                if review_form.rating.data or (
-                    not review_form.rating.data and existing_review.rating
-                ):
+                if review_form.rating.data or existing_review.rating:
                     existing_review.rating = review_form.rating.data
 
                 if not review_form.text.data and not review_form.rating.data:
@@ -302,7 +358,25 @@ def product(product_id):
                 db.session.commit()
             else:
                 flash("You have not reviewed this product yet.", "error")
-        elif form == "delete" and delete_review_form.validate_on_submit():
+
+            return redirect(url_for("product", product_id=product.id))
+
+        except Exception as e:
+            flash("An error occurred while updating your review.", "error")
+            # Log the error for debugging purposes
+            print(e)
+            return redirect(request.referrer or url_for("index"))  # Redirect back
+
+    def delete_review():
+        try:
+            if not current_user.is_authenticated:
+                flash("You need to be logged in to delete a review.", "error")
+                return redirect(url_for("login"))  # Redirect to login page
+
+            if not delete_review_form.validate_on_submit():
+                flash("Invalid request to delete a review.", "error")
+                return redirect(request.referrer or url_for("index"))  # Redirect back
+
             review_to_delete = Review.query.get_or_404(
                 delete_review_form.review_id.data
             )
@@ -313,35 +387,72 @@ def product(product_id):
                 flash("Review deleted successfully.", "success")
             else:
                 flash("You are not authorized to delete this review.", "error")
-        elif form == "basket" and add_to_basket_form.validate_on_submit():
+
+            return redirect(url_for("product", product_id=review_to_delete.product_id))
+
+        except Exception as e:
+            flash("An error occurred while deleting the review.", "error")
+            # Log the error for debugging purposes
+            print(e)
+            return redirect(request.referrer or url_for("index"))  # Redirect back
+
+    def add_to_basket():
+        try:
+            if not current_user.is_authenticated:
+                flash("You need to be logged in to add items to your basket.", "error")
+                return redirect(url_for("login"))  # Redirect to login page
+
+            if not add_to_basket_form.validate_on_submit():
+                flash("Invalid quantity value.", "error")
+                return redirect(request.referrer or url_for("index"))  # Redirect back
+
             product = Product.query.get_or_404(product_id)
             user_basket = current_user.basket
 
             if user_basket is None:
                 user_basket = Basket(user=current_user)
                 db.session.add(user_basket)
+                db.session.commit()
 
             basket_item = BasketItem.query.filter_by(
                 basket=user_basket, product=product
             ).first()
             if basket_item:
-                basket_item.quantity += 1
+                basket_item.quantity += int(add_to_basket_form.quantity.data)
             else:
                 basket_item = BasketItem(
-                    basket=user_basket, basket_id=user_basket, product=product
+                    basket=user_basket,
+                    product=product,
+                    quantity=int(add_to_basket_form.quantity.data),
                 )
                 db.session.add(basket_item)
-
             db.session.commit()
+
             flash(f"{product.name} added to your basket!", "success")
             return redirect(url_for("basket"))
 
-    reviews = Review.query.filter_by(product_id=product.id).all()
-    user_review = None
-    for review in reviews:
-        if review.user_id == current_user.id:
-            user_review = review
-            break
+        except Exception as e:
+            flash("An error occurred while adding to your basket.", "error")
+            # Log the error for debugging purposes
+            print(e)
+            return redirect(request.referrer or url_for("index"))  # Redirect back
+
+    if request.method == "POST":
+        form_handlers = {
+            "post": add_review,
+            "update": update_review,
+            "delete": delete_review,
+            "basket": add_to_basket,
+        }
+
+        form = request.form.get("form")
+        if form in form_handlers:
+            form_handlers[form]()
+
+    user_review = next(
+        (review for review in product.reviews if review.user_id == current_user.id),
+        None,
+    )
 
     average_rating = (
         db.session.query(func.avg(Review.rating))
@@ -349,7 +460,7 @@ def product(product_id):
         .scalar()
     )
 
-    average_rating = round(average_rating, 1) if average_rating is not None else None
+    average_rating = round(average_rating, 0) if average_rating is not None else None
 
     return render_template(
         "product.html",
@@ -362,12 +473,6 @@ def product(product_id):
         average_rating=average_rating,
         seller=product.seller_id == current_user.seller_info.id,
     )
-
-
-# @app.route("/add_to_basket/<int:product_id>", methods=["POST"])
-# def add_to_basket(product_id):
-#     print("basket")
-#     return redirect(url_for("product", product_id=product_id))
 
 
 def save_uploaded_file(file_storage, directory):
