@@ -80,7 +80,6 @@ def store():
 def seller_account():
     seller_form = SellerForm(current_user=current_user)
     product_form = ProductForm()
-    delete_product_form = DeleteProductForm()
     form = request.form.get("form")
 
     if request.method == "POST":
