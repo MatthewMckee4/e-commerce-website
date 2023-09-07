@@ -30,7 +30,7 @@ def calculate_basket_total(basket_items):
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html", title="Home")
+    return render_template("index.html", title="Home")
 
 
 @app.route("/about")
