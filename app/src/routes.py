@@ -75,7 +75,7 @@ def basket():
                 title="Basket",
                 user_basket=user_basket,
                 basket_items=basket_items,
-                basket_total=basket_total,
+                basket_total=f"{basket_total:.2f}",
                 form_dict=form_dict,
             )
 
@@ -85,8 +85,6 @@ def basket():
     else:
         flash("Please log in to view your basket.", "info")
         return redirect(url_for("login"))  # Redirect to login page
-
-    return render_template("basket.html", title="Basket")
 
 
 @app.route("/store", methods=["GET"])
@@ -167,7 +165,7 @@ def seller_account():
 
 @app.route("/become_seller", methods=["GET", "POST"])
 def become_seller():
-    seller_form = SellerForm()
+    seller_form = SellerForm(current_user=current_user)
 
     if seller_form.validate_on_submit():
         seller = Seller(name=seller_form.seller_name.data, user_id=current_user.id)
