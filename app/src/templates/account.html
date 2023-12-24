@@ -1,0 +1,137 @@
+{% extends "layout.html" %} {% block content %}
+<div class="account form-main">
+    <div class="account-info">
+        <div class="user-details">
+            <div class="user-message">
+                <h1>Hi, {{ current_user.username }}</h1>
+            </div>
+            <div class="user-logo">
+                {% if current_user.logo_url != 'default.jpg' %}
+                <img
+                    src="{{ url_for('static', filename=current_user.logo_url) }}"
+                    alt=""
+                    class="logo-img"
+                />
+                {% endif %}
+            </div>
+        </div>
+        <div class="seller-link">
+            {% if current_user.is_seller == False %}
+            <h4>
+                <a href="{{ url_for('become_seller') }}">Become a Seller</a>
+            </h4>
+            {% else %}
+            <h4>
+                <a href="{{ url_for('seller_account') }}">Seller Account</a>
+            </h4>
+            {% endif %}
+        </div>
+    </div>
+
+    <h3>Account Details</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {{ account_form.hidden_tag() }}
+        <div class="form-group">
+            {{ account_form.username.label }} {% if account_form.username.errors
+            %} {{ account_form.username(class="form-control is-invalid",
+            size=20) }}
+            <div class="invalid-feedback">
+                {% for error in account_form.username.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.username(class="form-control", size=20,
+            value=current_user.username) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ account_form.first_name.label }} {% if
+            account_form.first_name.errors %} {{
+            account_form.first_name(class="form-control is-invalid", size=20) }}
+            <div class="invalid-feedback">
+                {% for error in account_form.first_name.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.first_name(class="form-control", size=20,
+            value=current_user.first_name) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ account_form.last_name.label }} {% if
+            account_form.last_name.errors %} {{
+            account_form.last_name(class="form-control is-invalid", size=20) }}
+            <div class="invalid-feedback">
+                {% for error in account_form.last_name.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.last_name(class="form-control", size=20,
+            value=current_user.last_name) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ account_form.email.label }} {% if account_form.email.errors %} {{
+            account_form.email(class="form-control is-invalid", size=30) }}
+            <div class="invalid-feedback">
+                {% for error in account_form.email.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.email(class="form-control", size=30,
+            value=current_user.email) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ account_form.bio.label }} {% if account_form.bio.errors %} {{
+            account_form.bio(class="form-control is-invalid", rows=3, cols=40)
+            }}
+            <div class="invalid-feedback">
+                {% for error in account_form.bio.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.bio(class="form-control", rows=3,
+            cols=40, value=current_user.bio) }} {% endif %}
+        </div>
+        <div class="form-group">
+            {{ account_form.date_of_birth.label }} {% if
+            account_form.date_of_birth.errors %} {{
+            account_form.date_of_birth(class="form-control is-invalid", size=10,
+            placeholder="YYYY-MM-DD") }}
+            <div class="invalid-feedback">
+                {% for error in account_form.date_of_birth.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.date_of_birth(class="form-control",
+            size=10, placeholder="YYYY-MM-DD", value=current_user.date_of_birth)
+            }} {% endif %}
+        </div>
+        <div class="form-group image-upload">
+            {{ account_form.logo.label }} {% if account_form.logo.errors %} {{
+            account_form.logo(class="form-control file-form-control is-invalid")
+            }}
+            <div class="invalid-feedback">
+                {% for error in account_form.logo.errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% else %} {{ account_form.logo(class="form-control
+            file-form-control ") }} {% endif %}
+        </div>
+        <div class="form-group">{{ account_form.submit }}</div>
+    </form>
+    <form method="POST">
+        {{ delete_form.hidden_tag() }}
+        <div class="delete-button">
+            {{ delete_form.submit( onclick="showConfirmationDialog(event)") }}
+        </div>
+        <div
+            class="delete-button"
+            id="confirmation-dialog"
+            style="display: none"
+        >
+            {{ delete_form.confirm(class="delete-button") }}
+            <button id="cancel-delete">Cancel</button>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}

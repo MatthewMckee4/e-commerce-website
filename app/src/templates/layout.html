@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static', filename='main.css') }}"
+        />
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+        {% if title %}
+        <title>Nova Store - {{ title }}</title>
+        {% else %}
+        <title>Flask Blog</title>
+        {% endif %}
+    </head>
+    <body>
+        <header>
+            <nav>
+                <div class="nav-links">
+                    <a href="/">Nova Store</a>
+                    <a href="{{ url_for('home') }}">Home</a>
+                    <a href="{{ url_for('about') }}">About</a>
+                    <a href="{{ url_for('store') }}">Store</a>
+                </div>
+                <div class="user-links">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('basket') }}">basket</a>
+                    <a href="{{ url_for('account') }}">
+                        <div class="account-link">
+                            {% if current_user.logo_url != 'default.jpg' %}
+                            <img
+                                src="{{ url_for('static', filename=current_user.logo_url) }}"
+                                alt=""
+                                class="logo"
+                            />
+                            {% endif %}
+                            <span>Account</span>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('register') }}">Register</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </header>
+        <main>
+            <div class="content-container">
+                <div class="flash-messages">
+                    {% with messages =
+                    get_flashed_messages(with_categories=true) %} {% if messages
+                    %} {% for category, message in messages %}
+                    <div
+                        class="alert alert-{{ category }} hide-message"
+                        data-message-id="{{ loop.index }}"
+                    >
+                        {{ message }}
+                    </div>
+                    {% endfor %} {% endif %} {% endwith %}
+                </div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        // Get all elements with the "hide-message" class
+                        const hideMessageElements =
+                            document.querySelectorAll(".hide-message");
+
+                        // Loop through each element and schedule its removal
+                        hideMessageElements.forEach(function (element) {
+                            const messageID =
+                                element.getAttribute("data-message-id");
+                            const removalTime = 2000; // Time in milliseconds (5 seconds)
+
+                            setTimeout(function () {
+                                // Fade out the element before removing it
+                                element.style.transition = "opacity 0.5s";
+                                element.style.opacity = "0";
+
+                                // Remove the element from the DOM after fading out
+                                setTimeout(function () {
+                                    element.remove();
+                                }, 500); // Wait for the fade out transition to complete
+                            }, removalTime);
+                        });
+                    });
+                </script>
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </body>
+    <footer></footer>
+</html>
