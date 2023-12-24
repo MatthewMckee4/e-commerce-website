@@ -1,0 +1,35 @@
+{% extends "layout.html" %} {% block content %}
+<h1>Basket</h1>
+<h3>Total: £{{ basket_total }}</h3>
+<div class="product-grid">
+    {% for item in basket_items %}
+    <div class="product-card">
+        <div class="product-image-container">
+            <a href="{{ url_for('product', product_id=item.product.id) }}">
+                <img
+                    src="{{ url_for('static', filename=item.product.image_url) }}"
+                    alt="{{ item.product.name }}"
+                    class="product-image-inner"
+                />
+            </a>
+        </div>
+        <div class="product-details">
+            <h4 class="product-title">{{ item.product.name }}</h4>
+            <form method="post">
+                {{ form_dict[item.id].hidden_tag() }}
+                <div>
+                    {{ form_dict[item.id].product_id(value=item.id,
+                    class='hidden-field') }}
+                </div>
+                <div class="form-group">
+                    {{ form_dict[item.id].quantity.label }} {{
+                    form_dict[item.id].quantity(data=item.quantity,
+                    onchange="this.form.submit()") }}
+                </div>
+            </form>
+            <!-- Add more product details if needed -->
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

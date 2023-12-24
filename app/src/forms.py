@@ -8,14 +8,13 @@ from wtforms import (
     DateField,
     FloatField,
     IntegerField,
-    HiddenField,
+    SelectField,
 )
 import re
 from wtforms.validators import (
     DataRequired,
     Length,
     Email,
-    EqualTo,
     ValidationError,
     Optional,
     NumberRange,
@@ -27,14 +26,10 @@ from datetime import datetime
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField(
-        "Username", validators=[DataRequired(), Length(min=2, max=20)]
-    )
-    email = StringField("Email", validators=[DataRequired(), Email()])
+    username = StringField("Username", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
-    confirm_password = PasswordField(
-        "Confirm Password", validators=[DataRequired(), EqualTo("password")]
-    )
+    confirm_password = PasswordField("Confirm Password", validators=[DataRequired()])
     submit = SubmitField("Sign Up")
 
     def validate_username(self, username):
@@ -48,26 +43,6 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError("That email is taken. Please choose a different one.")
-
-    def validate_password(self, password):
-        if len(password.data) < 7:
-            raise ValidationError("Password must be at least 7 characters long.")
-
-        if not re.search(r"[A-Z]", password.data):
-            raise ValidationError("Password must contain at least one capital letter.")
-
-        if not re.search(r"[a-z]", password.data):
-            raise ValidationError(
-                "Password must contain at least one lowercase letter."
-            )
-
-        if not re.search(r"\d", password.data):
-            raise ValidationError("Password must contain at least one digit.")
-
-        if not re.search(r"[._!-]", password.data):
-            raise ValidationError(
-                "Password must contain at least one special character (._-!)."
-            )
 
 
 class LoginForm(FlaskForm):
@@ -205,3 +180,14 @@ class DeleteReviewForm(FlaskForm):
 class DeleteProductForm(FlaskForm):
     product_id = StringField("Product ID")
     submit = SubmitField("Delete")
+
+
+class AddToBasketForm(FlaskForm):
+    product_id = StringField("Product ID")
+    quantity = SelectField(
+        "Quantity:", choices=[(str(i), str(i)) for i in range(0, 31)], default="1"
+    )
+    submit = SubmitField("Add to Basket")
+
+    def __repr__(self):
+        return f"AddToBasketForm(product_id={self.product_id.data}, quantity={self.quantity.data})"

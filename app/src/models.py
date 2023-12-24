@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
 
     seller_info = db.relationship("Seller", uselist=False, back_populates="user")
     reviews = db.relationship("Review", back_populates="user")
+    basket = db.relationship("Basket", uselist=False, back_populates="user")
 
     def __repr__(self):
         return f"User({self.id}, {self.username}, {self.email})"
@@ -52,6 +53,7 @@ class Product(db.Model):
     seller_id = db.Column(db.Integer, db.ForeignKey("seller.id"), nullable=False)
     seller = db.relationship("Seller", back_populates="products")
     reviews = db.relationship("Review", back_populates="product")
+    in_baskets = db.relationship("BasketItem", back_populates="product")
 
     def __repr__(self):
         return f"Product({self.id}, {self.name}, {self.price})"
@@ -76,3 +78,27 @@ class Review(db.Model):
 
     def __repr__(self):
         return f"Review({self.id}, Rating: {self.rating}, Product: {self.product.name}, User: {self.user.username})"
+
+
+class Basket(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user = db.relationship("User", back_populates="basket")
+
+    items = db.relationship("BasketItem", back_populates="basket")
+
+    def __repr__(self):
+        return f"Basket({self.id}, User: {self.user.name}, {len(self.items)} Items)"
+
+
+class BasketItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable=False)
+    basket_id = db.Column(db.Integer, db.ForeignKey("basket.id"), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)  # Add this line
+
+    product = db.relationship("Product", back_populates="in_baskets")
+    basket = db.relationship("Basket", back_populates="items")
+
+    def __repr__(self):
+        return f"BasketItem(id: {self.id}, {self.product.name}, product_id: {self.product_id}, Qty: {self.quantity})"

@@ -1,6 +1,7 @@
 body {
-    font-family: verdana;
+    font-family: lato, sans-serif;
     margin: 0;
+    background-color: darkgrey;
 }
 main {
     margin: 10px;
@@ -18,13 +19,17 @@ nav {
     display: flex;
     justify-content: space-between;
 }
-
+nav > div {
+    padding: 10px;
+}
 nav a {
     color: white;
-    padding: 12px 20px;
+    padding: 22px 30px;
+    margin: 0 10px;
+    border-radius: 17px;
 }
 
-nav a:hover {
+nav a:not([href="/"]):hover {
     background-color: #2c4427;
 }
 
@@ -39,20 +44,19 @@ nav .logo {
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    margin-top: 2px;
     margin-right: 10px;
 }
 
 /* Flash Messages */
 .flash-messages {
-    max-width: 840px;
+    max-width: 860px;
     margin: auto;
 }
 
 .alert {
-    padding: 10px;
+    padding: 20px;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 30px;
 }
 
 .alert-success {
@@ -73,48 +77,83 @@ nav .logo {
 }
 
 /* All forms */
-form input[type="submit"] {
-    background-color: green;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+.form-main {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin: auto;
+    margin-bottom: 2rem;
 }
 
-form input[type="submit"]:hover {
-    background-color: darkgreen;
+.form-group input,
+.form-group textarea {
+    font-family: lato, sans-serif;
+    background-color: white;
 }
 
-form div {
-    margin-bottom: 15px;
+.form-main form div > *:not(label):not(span) {
+    padding: 14px;
+    border-radius: 20px;
+}
+
+.form-group > * {
+    margin: 10px 0 10px 0;
+}
+
+.form-main form div.text label {
+    margin-left: 15px;
+}
+
+.form-main > div {
+    margin-top: 20px;
+}
+
+.form-main h3 {
+    text-align: center;
 }
 
 .form-group label,
 .form-group a,
 .redirect-form-link {
-    font-size: 12px;
+    font-size: 15px;
+}
+
+.form-main input[type="submit"] {
+    color: white;
+    padding: 14px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+}
+.form-main .form-group input[type="submit"] {
+    background-color: green;
+}
+.form-main input[type="submit"]:hover {
+    background-color: darkgreen;
+}
+.form-main .delete-button input[type="submit"] {
+    background-color: red;
+}
+
+.form-main .image-upload input[type="file"] {
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group input[type="date"],
 .form-group textarea {
-    padding: 10px; /* Add padding for spacing */
-    font-size: 12px; /* Adjust font size */
+    font-size: 13px; /* Adjust font size */
     border: 1px solid #ccc; /* Add a border for visual separation */
-    border-radius: 5px; /* Add rounded corners */
     box-sizing: border-box; /* Include padding and border in the width */
-    font-family: verdana;
 }
 
 /* Login / Register */
 .login-register-form {
-    max-width: 460px;
-    margin: auto;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
+    margin-top: 150px;
+    max-width: 400px;
 }
 
 .login-register-form a {
@@ -132,21 +171,21 @@ form div {
 .invalid-feedback {
     color: #dc3545;
     font-size: 14px;
-    margin-top: 5px;
 }
 .invalid-feedback span {
     display: block;
 }
 
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
 /* Account */
 
 .account {
     max-width: 800px;
-    margin: auto;
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
-    margin-bottom: 20px;
 }
 
 .account-info {
@@ -174,31 +213,15 @@ form div {
 .user-message h1 {
     margin: 0;
 }
-/* File Input  */
-.file-upload {
-    margin-bottom: 20px;
-    position: relative;
-}
-
-.file-form-control {
-    padding: 10px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
 
 /* Delete Button */
-form .delete-button input[type="submit"] {
-    background-color: red;
-}
 
 #cancel-delete {
     background-color: gray;
     color: white;
-    padding: 10px 20px;
     border: 1px solid #ccc;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 20px;
 }
 
 .hidden-field {
@@ -207,21 +230,29 @@ form .delete-button input[type="submit"] {
 
 /* Product Grid */
 .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
 .product-card {
-    border: 1px solid #ccc;
     background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 300px;
+    grid-template-rows: 300px 100px;
     height: 100%;
     transition: transform 0.3s ease;
 }
 
+.product-image-container {
+    grid: 1 / 2 / 1 / 2;
+    align-self: center;
+}
+
+.product-details {
+    grid: 1 / 2 / 2 / 3;
+    padding: 10px;
+}
 .product-card:hover {
     transform: translateY(-3px); /* Move up by 5px on hover */
 }
@@ -230,21 +261,8 @@ form .delete-button input[type="submit"] {
     color: #333;
 }
 
-.product-image-container {
-    text-align: center;
+.product-image-container img {
     width: 100%;
-    overflow: hidden;
-}
-
-.product-image-inner {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.product-details {
-    padding: 10px;
-    flex: 1;
 }
 
 .product-title {
@@ -270,14 +288,15 @@ form .delete-button input[type="submit"] {
     display: flex;
     justify-content: space-between;
     margin: auto;
-    padding: 20px;
+    padding: 30px;
     border: 1px solid #ccc;
     background-color: #fff;
     margin-bottom: 10px;
+    border-radius: 20px;
 }
 
 .product-image img {
-    max-width: 100%;
+    width: 300px;
     height: auto;
 }
 
@@ -286,44 +305,46 @@ form .delete-button input[type="submit"] {
     padding: 10px;
 }
 
-.btn-buy {
-    background-color: #f0c14b;
-    color: #111;
-    padding: 10px 20px;
+.product-info input[type="submit"] {
+    background-color: green;
+    color: white;
+    padding: 14px 20px;
     border: none;
-    border-radius: 3px;
     cursor: pointer;
-    font-weight: bold;
+    border-radius: 20px;
 }
 
-
 .review-list {
+    margin: auto;
+    background-color: white;
+    max-width: 800px;
     margin-top: 20px;
+    padding: 30px;
+    border-radius: 30px;
 }
 
 .review-box {
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 20px;
     margin: 10px 0;
     background-color: #f9f9f9;
     display: flex;
-    flex-direction: column; /* Display username and text in a column layout */
+    justify-content: space-between;
+    border-radius: 30px;
 }
 
-.review-user {
-    font-weight: bold;
-    margin-bottom: 5px; /* Add some spacing between username and comment text */
+.review-box h3 {
+    margin-top: 10px;
+}
+.delete-review input {
+    text-align: right;
+    background-color: rgb(215, 48, 48);
+    color: black;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 20px;
 }
 
-.review-text {
-    margin: 0;
-}
-
-.delete-button {
-    text-align: left;
-    margin-left: 10px;
-}
-
-.rating {
-    width: 10%;
+.delete-review input:hover {
+    background-color: rgb(188, 18, 18);
 }

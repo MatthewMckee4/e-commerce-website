@@ -1,29 +1,33 @@
 {% extends "layout.html" %} {% block content %}
-<div class="account-info">
-    <div class="user-details">
-        <div class="user-message">
-            <h1>Hi, {{ current_user.username }}</h1>
+<div class="account form-main">
+    <div class="account-info">
+        <div class="user-details">
+            <div class="user-message">
+                <h1>Hi, {{ current_user.username }}</h1>
+            </div>
+            <div class="user-logo">
+                {% if current_user.logo_url != 'default.jpg' %}
+                <img
+                    src="{{ url_for('static', filename=current_user.logo_url) }}"
+                    alt=""
+                    class="logo-img"
+                />
+                {% endif %}
+            </div>
         </div>
-        <div class="user-logo">
-            {% if current_user.logo_url != 'default.jpg' %}
-            <img
-                src="{{ url_for('static', filename=current_user.logo_url) }}"
-                alt=""
-                class="logo-img"
-            />
+        <div class="seller-link">
+            {% if current_user.is_seller == False %}
+            <h4>
+                <a href="{{ url_for('become_seller') }}">Become a Seller</a>
+            </h4>
+            {% else %}
+            <h4>
+                <a href="{{ url_for('seller_account') }}">Seller Account</a>
+            </h4>
             {% endif %}
         </div>
     </div>
-    <div class="seller-link">
-        {% if current_user.is_seller == False %}
-        <h4><a href="{{ url_for('become_seller') }}">Become a Seller</a></h4>
-        {% else %}
-        <h4><a href="{{ url_for('seller_account') }}">Seller Account</a></h4>
-        {% endif %}
-    </div>
-</div>
 
-<div class="account">
     <h3>Account Details</h3>
     <form method="POST" enctype="multipart/form-data">
         {{ account_form.hidden_tag() }}
@@ -100,7 +104,7 @@
             size=10, placeholder="YYYY-MM-DD", value=current_user.date_of_birth)
             }} {% endif %}
         </div>
-        <div class="form-group file-upload">
+        <div class="form-group image-upload">
             {{ account_form.logo.label }} {% if account_form.logo.errors %} {{
             account_form.logo(class="form-control file-form-control is-invalid")
             }}
@@ -110,7 +114,7 @@
                 {% endfor %}
             </div>
             {% else %} {{ account_form.logo(class="form-control
-            file-form-control") }} {% endif %}
+            file-form-control ") }} {% endif %}
         </div>
         <div class="form-group">{{ account_form.submit }}</div>
     </form>
@@ -130,17 +134,4 @@
     </form>
 </div>
 
-<script>
-    function showConfirmationDialog(event) {
-        event.preventDefault();
-
-        const dialog = document.getElementById("confirmation-dialog");
-        dialog.style.display = "block";
-
-        const cancelButton = document.getElementById("cancel-delete");
-        cancelButton.addEventListener("click", function () {
-            dialog.style.display = "none";
-        });
-    }
-</script>
 {% endblock content %}
